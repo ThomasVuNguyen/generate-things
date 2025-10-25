@@ -1,6 +1,0 @@
-{
-  "ollama": {
-    "url": "http://localhost:11434",
-    "default_model": "gemma3:12b"
-  }
-}
