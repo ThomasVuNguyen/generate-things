@@ -10,45 +10,19 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from inference.kimi import chat_with_kimi
 
 
-def generate_fruit_names(count=1000):
+def generate_fruit_names_batch(prompt_template, count=200):
     """
-    Generate a list of common fruit names using the Kimi model in one go.
+    Generate a batch of fruit names using a specific prompt template.
     
     Args:
-        count (int): Total number of fruits to generate
+        prompt_template (str): The prompt template to use
+        count (int): Number of fruits to generate in this batch
     
     Returns:
         list: List of fruit names
     """
-    print(f"Generating {count} diverse fruit names in one go...")
+    prompt = prompt_template.format(count=count)
     
-    prompt = f"""Generate a list of exactly {count} diverse fruit names.
-
-Requirements:
-- Only single-word fruit names (no spaces, hyphens, or compound words)
-- Include a wide variety of fruits from different categories
-- Include both common and less common fruits
-- Include tropical fruits, temperate fruits, berries, citrus fruits, stone fruits, pome fruits
-- NO vegetables (tomato, cucumber, etc.)
-- NO nuts (almond, walnut, etc.)
-- NO spices or herbs
-- NO scientific names
-- NO regional variants or subspecies
-- NO processed fruit products (jam, juice, etc.)
-- Make sure each fruit name is unique (no duplicates)
-
-Focus on diverse categories:
-- Citrus fruits: orange, lemon, lime, grapefruit, tangerine, mandarin, pomelo, kumquat
-- Berries: strawberry, blueberry, raspberry, blackberry, cranberry, gooseberry, elderberry, mulberry
-- Tropical fruits: mango, pineapple, papaya, coconut, banana, guava, passionfruit, dragonfruit, lychee
-- Stone fruits: peach, plum, cherry, apricot, nectarine, avocado
-- Pome fruits: apple, pear, quince
-- Melons: watermelon, cantaloupe, honeydew, muskmelon
-- Grapes and vine fruits: grape, kiwi
-- And many more diverse fruits from around the world
-
-Return ONLY the fruit names, one per line, no numbers, no explanations, no additional text."""
-
     try:
         response = chat_with_kimi(prompt, stream=False)
         
@@ -62,12 +36,118 @@ Return ONLY the fruit names, one per line, no numbers, no explanations, no addit
                 if clean_name and len(clean_name.split()) == 1:  # Single word only
                     fruits.append(clean_name.lower())
         
-        print(f"Generated {len(fruits)} fruits from API response")
+        print(f"Generated {len(fruits)} fruits from this batch")
         return fruits
         
     except Exception as e:
-        print(f"Error generating fruits: {e}")
+        print(f"Error generating fruits in batch: {e}")
         return []
+
+
+def generate_fruit_names_multi_batch(target_count=1000):
+    """
+    Generate fruit names using multiple specialized prompts to get more variety.
+    
+    Args:
+        target_count (int): Target number of fruits to generate
+    
+    Returns:
+        list: List of fruit names
+    """
+    print(f"Generating {target_count} diverse fruit names using multiple specialized prompts...")
+    
+    # Define different prompt templates for different fruit categories
+    prompts = [
+        {
+            "name": "Common Temperate Fruits",
+            "template": """Generate exactly {count} common temperate fruit names.
+
+Requirements:
+- Only single-word fruit names (no spaces, hyphens, or compound words)
+- Focus on fruits commonly grown in temperate climates
+- Include: apples, pears, peaches, plums, cherries, apricots, nectarines, grapes, berries
+- NO vegetables, nuts, spices, or scientific names
+- NO duplicates
+
+Return ONLY the fruit names, one per line, no numbers, no explanations."""
+        },
+        {
+            "name": "Tropical & Exotic Fruits",
+            "template": """Generate exactly {count} tropical and exotic fruit names.
+
+Requirements:
+- Only single-word fruit names (no spaces, hyphens, or compound words)
+- Focus on tropical and exotic fruits from around the world
+- Include: mango, pineapple, papaya, coconut, banana, guava, passionfruit, dragonfruit, lychee, rambutan, durian, jackfruit
+- NO vegetables, nuts, spices, or scientific names
+- NO duplicates
+
+Return ONLY the fruit names, one per line, no numbers, no explanations."""
+        },
+        {
+            "name": "Citrus Fruits",
+            "template": """Generate exactly {count} citrus fruit names.
+
+Requirements:
+- Only single-word fruit names (no spaces, hyphens, or compound words)
+- Focus on citrus fruits and their varieties
+- Include: orange, lemon, lime, grapefruit, tangerine, mandarin, clementine, pomelo, kumquat, yuzu
+- NO vegetables, nuts, spices, or scientific names
+- NO duplicates
+
+Return ONLY the fruit names, one per line, no numbers, no explanations."""
+        },
+        {
+            "name": "Berries & Small Fruits",
+            "template": """Generate exactly {count} berry and small fruit names.
+
+Requirements:
+- Only single-word fruit names (no spaces, hyphens, or compound words)
+- Focus on berries and small fruits
+- Include: strawberry, blueberry, raspberry, blackberry, cranberry, gooseberry, elderberry, mulberry, currant
+- NO vegetables, nuts, spices, or scientific names
+- NO duplicates
+
+Return ONLY the fruit names, one per line, no numbers, no explanations."""
+        },
+        {
+            "name": "Melons & Large Fruits",
+            "template": """Generate exactly {count} melon and large fruit names.
+
+Requirements:
+- Only single-word fruit names (no spaces, hyphens, or compound words)
+- Focus on melons and large fruits
+- Include: watermelon, cantaloupe, honeydew, muskmelon, pumpkin (as fruit), squash varieties
+- NO vegetables, nuts, spices, or scientific names
+- NO duplicates
+
+Return ONLY the fruit names, one per line, no numbers, no explanations."""
+        },
+        {
+            "name": "Rare & Uncommon Fruits",
+            "template": """Generate exactly {count} rare and uncommon fruit names.
+
+Requirements:
+- Only single-word fruit names (no spaces, hyphens, or compound words)
+- Focus on rare, uncommon, or lesser-known fruits from around the world
+- Include fruits from South America, Africa, Asia, and other regions
+- NO vegetables, nuts, spices, or scientific names
+- NO duplicates
+
+Return ONLY the fruit names, one per line, no numbers, no explanations."""
+        }
+    ]
+    
+    all_fruits = []
+    batch_size = max(50, target_count // len(prompts))  # Distribute target across prompts
+    
+    for i, prompt_info in enumerate(prompts, 1):
+        print(f"\nBatch {i}/{len(prompts)}: {prompt_info['name']}")
+        fruits = generate_fruit_names_batch(prompt_info['template'], batch_size)
+        all_fruits.extend(fruits)
+        print(f"Total fruits so far: {len(all_fruits)}")
+    
+    return all_fruits
 
 
 def filter_single_word_fruits(fruits):
@@ -111,15 +191,15 @@ def save_fruits_list(fruits, filename="list.json"):
 
 def main():
     """Main function to generate and save fruit names."""
-    print("=== Fruit Name Generator ===")
-    print("Generating 1000 common single-word fruit names...")
+    print("=== Enhanced Fruit Name Generator ===")
+    print("Generating 1000+ diverse single-word fruit names using multiple specialized prompts...")
     print()
     
-    # Generate fruits in one go
-    fruits = generate_fruit_names(count=1000)
+    # Generate fruits using multiple specialized prompts
+    fruits = generate_fruit_names_multi_batch(target_count=1000)
     
     # Filter to ensure single words only
-    print("\nFiltering to single-word fruits only...")
+    print(f"\nFiltering to single-word fruits only...")
     filtered_fruits = filter_single_word_fruits(fruits)
     
     print(f"After filtering: {len(filtered_fruits)} single-word fruits")
@@ -150,6 +230,13 @@ def main():
     
     if len(final_fruits) > 20:
         print(f"  ... and {len(final_fruits) - 20} more")
+    
+    # Show statistics
+    print(f"\nStatistics:")
+    print(f"  Total generated: {len(fruits)}")
+    print(f"  After filtering: {len(filtered_fruits)}")
+    print(f"  After deduplication: {len(unique_fruits)}")
+    print(f"  Final count: {len(final_fruits)}")
 
 
 if __name__ == "__main__":
