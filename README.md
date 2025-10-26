@@ -10,13 +10,13 @@ We have the following categories of objects
 
 - animals: ThomasTheMaker/Synthetic-Animals
 - fruits: ThomasTheMaker/Synthetic-Fruits
-- food: running
 - building & architectures: ThomasTheMaker/Synthetic-Buildings
-- historical artifacts: running
 - household items: ThomasTheMaker/Synthetic-HouseholdItems
 - musical instruments: ThomasTheMaker/Synthetic-Musical-Instruments
+- vehicles: ThomasTheMaker/Synthetic-Vehicles
+- food: running...
+- historical artifacts: running...
 - mythical creatures: running
 - tech & electronics: running
-- tools: running
-- vehicles: ThomasTheMaker/Synthetic-Vehicles
-- pokemon: running
+- tools: running...
+- pokemon: running...

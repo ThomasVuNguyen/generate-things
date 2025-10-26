@@ -12,19 +12,19 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from inference.kimi import chat_with_kimi
 
 
-def generate_openscad_household_item(item_name, style="realistic", complexity="medium"):
+def generate_openscad_tool(tool_name, style="realistic", complexity="medium"):
     """
-    Generate OpenSCAD code for a household item using the Kimi model.
+    Generate OpenSCAD code for a tool using the Kimi model.
     
     Args:
-        item_name (str): Name of the household item to generate
+        tool_name (str): Name of the tool to generate
         style (str): Style of the model ("realistic", "stylized", "minimal")
         complexity (str): Complexity level ("simple", "medium", "detailed")
     
     Returns:
         str: Generated OpenSCAD code
     """
-    prompt = f"""Generate OpenSCAD code for a {item_name} in {style} style with {complexity} complexity.
+    prompt = f"""Generate OpenSCAD code for a {tool_name} tool in {style} style with {complexity} complexity.
 
 Requirements:
 - Use only basic OpenSCAD primitives (cube, sphere, cylinder, etc.)
@@ -33,18 +33,26 @@ Requirements:
 - Use loops and modules for repetitive parts
 - Make it 3D printable (no overhangs, proper wall thickness)
 - Include comments explaining each part
-- The model should be recognizable as a {item_name}
+- The model should be recognizable as a {tool_name}
 - Size should be reasonable for 3D printing (roughly 50-100mm in largest dimension)
+- Include tool-specific features and characteristics
+- Use appropriate colors for the tool (color() function)
 
 Style guidelines for {style}:
 - Realistic: More detailed, functional accuracy
-- Stylized: Simplified but recognizable features
-- Minimal: Very simple geometric shapes
+- Stylized: Simplified but recognizable tool features
+- Minimal: Very simple geometric shapes representing the tool
 
 Complexity for {complexity}:
 - Simple: Basic shapes, 20-50 lines of code
 - Medium: Moderate detail, 50-150 lines of code  
 - Detailed: High detail, 150+ lines of code
+
+Tool-specific considerations:
+- Include characteristic features (handles, blades, mechanisms, etc.)
+- Use appropriate proportions for the tool
+- Include tool-specific details (grips, markings, etc.)
+- Consider the tool's typical appearance and functionality
 
 Output only the OpenSCAD code, no explanations or markdown formatting."""
 
@@ -52,7 +60,7 @@ Output only the OpenSCAD code, no explanations or markdown formatting."""
         response = chat_with_kimi(prompt, stream=False)
         return response.strip()
     except Exception as e:
-        print(f"Error generating OpenSCAD code for '{item_name}': {e}")
+        print(f"Error generating OpenSCAD code for '{tool_name}': {e}")
         return None
 
 
@@ -93,13 +101,13 @@ def test_openscad_rendering(code):
         return False
 
 
-def save_openscad_code(code, item_name, output_dir="generated_models"):
+def save_openscad_code(code, tool_name, output_dir="generated_models"):
     """
     Save OpenSCAD code to a file.
     
     Args:
         code (str): The OpenSCAD code to save
-        item_name (str): Name of the household item (used for filename)
+        tool_name (str): Name of the tool (used for filename)
         output_dir (str): Directory to save the file
     
     Returns:
@@ -108,8 +116,8 @@ def save_openscad_code(code, item_name, output_dir="generated_models"):
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
     
-    # Clean item name for filename
-    clean_name = "".join(c for c in item_name if c.isalnum() or c in (' ', '-', '_')).rstrip()
+    # Clean tool name for filename
+    clean_name = "".join(c for c in tool_name if c.isalnum() or c in (' ', '-', '_')).rstrip()
     clean_name = clean_name.replace(' ', '_').lower()
     
     # Add timestamp to avoid conflicts
@@ -124,7 +132,7 @@ def save_openscad_code(code, item_name, output_dir="generated_models"):
     return filepath
 
 
-def load_dataset(dataset_file="household_item_openscad_dataset.json"):
+def load_dataset(dataset_file="tool_openscad_dataset.json"):
     """
     Load the existing dataset from file.
     
@@ -139,8 +147,8 @@ def load_dataset(dataset_file="household_item_openscad_dataset.json"):
             with open(dataset_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 # Handle both old format and new format
-                if isinstance(data, dict) and "household_items" in data:
-                    return data["household_items"]
+                if isinstance(data, dict) and "tools" in data:
+                    return data["tools"]
                 elif isinstance(data, list):
                     return data
         except (json.JSONDecodeError, FileNotFoundError):
@@ -150,7 +158,7 @@ def load_dataset(dataset_file="household_item_openscad_dataset.json"):
     return []
 
 
-def save_dataset(dataset, dataset_file="household_item_openscad_dataset.json"):
+def save_dataset(dataset, dataset_file="tool_openscad_dataset.json"):
     """
     Save the dataset to file.
     
@@ -162,19 +170,19 @@ def save_dataset(dataset, dataset_file="household_item_openscad_dataset.json"):
         json.dump(dataset, f, indent=2, ensure_ascii=False)
 
 
-def add_item_to_dataset(dataset, item_name, openscad_code, render_success, error_message=None):
+def add_tool_to_dataset(dataset, tool_name, openscad_code, render_success, error_message=None):
     """
-    Add a household item entry to the dataset.
+    Add a tool entry to the dataset.
     
     Args:
         dataset (list): The dataset list
-        item_name (str): Name of the household item
+        tool_name (str): Name of the tool
         openscad_code (str): Generated OpenSCAD code
         render_success (bool): Whether the code renders successfully
         error_message (str): Error message if generation failed
     """
-    item_entry = {
-        "household_item": item_name,
+    tool_entry = {
+        "tool": tool_name,
         "openscad_code": openscad_code,
         "renders": render_success
     }
@@ -183,7 +191,7 @@ def add_item_to_dataset(dataset, item_name, openscad_code, render_success, error
     if error_message:
         item_entry["error"] = error_message
     
-    dataset.append(item_entry)
+    dataset.append(tool_entry)
 
 
 def format_time_duration(seconds):
@@ -230,13 +238,13 @@ def calculate_eta(start_time, current_index, total_items):
     return elapsed_time, eta_time, remaining_time
 
 
-def process_items_from_list(item_list, max_items=None, style="realistic", complexity="medium", dataset_file="household_item_openscad_dataset.json"):
+def process_tools_from_list(tool_list, max_items=None, style="realistic", complexity="medium", dataset_file="tool_openscad_dataset.json"):
     """
-    Process household items from list sequentially, generating OpenSCAD code and testing rendering.
+    Process tools from list sequentially, generating OpenSCAD code and testing rendering.
     
     Args:
-        item_list (list): List of household item names
-        max_items (int): Maximum number of items to process (None for all)
+        tool_list (list): List of tool names
+        max_items (int): Maximum number of tools to process (None for all)
         style (str): Style for all models
         complexity (str): Complexity for all models
         dataset_file (str): Path to the dataset file
@@ -247,42 +255,42 @@ def process_items_from_list(item_list, max_items=None, style="realistic", comple
     # Load existing dataset
     dataset = load_dataset(dataset_file)
     
-    # Determine how many items to process
+    # Determine how many tools to process
     if max_items is None:
-        max_items = len(item_list)
+        max_items = len(tool_list)
     else:
-        max_items = min(max_items, len(item_list))
+        max_items = min(max_items, len(tool_list))
     
-    print(f"Processing {max_items} household items from list...")
+    print(f"Processing {max_items} tools from list...")
     print(f"Style: {style}, Complexity: {complexity}")
     print(f"Dataset file: {dataset_file}")
     print("-" * 60)
     
-    # Get list of already processed items
-    processed_items = [entry["household_item"] for entry in dataset]
+    # Get list of already processed tools
+    processed_tools = [entry["tool"] for entry in dataset]
     
     successful_count = sum(1 for entry in dataset if entry.get("renders", False))
     failed_count = len(dataset) - successful_count
     
-    # Find the next item to process
-    items_to_process = []
-    for item_name in item_list[:max_items]:
-        if item_name not in processed_items:
-            items_to_process.append(item_name)
+    # Find the next tool to process
+    tools_to_process = []
+    for tool_name in tool_list[:max_items]:
+        if tool_name not in processed_tools:
+            tools_to_process.append(tool_name)
     
-    print(f"Found {len(processed_items)} already processed items")
-    print(f"Will process {len(items_to_process)} new items")
+    print(f"Found {len(processed_tools)} already processed tools")
+    print(f"Will process {len(tools_to_process)} new tools")
     
-    if len(items_to_process) == 0:
-        print("All items have already been processed!")
+    if len(tools_to_process) == 0:
+        print("All tools have already been processed!")
         return dataset
     
     # Start timing
     start_time = time.time()
     
-    for i, item_name in enumerate(items_to_process):
+    for i, tool_name in enumerate(tools_to_process):
         # Calculate ETA
-        elapsed_time, eta_time, remaining_time = calculate_eta(start_time, i, len(items_to_process))
+        elapsed_time, eta_time, remaining_time = calculate_eta(start_time, i, len(tools_to_process))
         
         # Format time strings
         elapsed_str = format_time_duration(elapsed_time)
@@ -293,10 +301,10 @@ def process_items_from_list(item_list, max_items=None, style="realistic", comple
         else:
             time_info = f" | Elapsed: {elapsed_str}"
         
-        print(f"Processing [{i+1}/{len(items_to_process)}]: {item_name}{time_info}")
+        print(f"Processing [{i+1}/{len(tools_to_process)}]: {tool_name}{time_info}")
         
         # Generate OpenSCAD code
-        code = generate_openscad_household_item(item_name, style, complexity)
+        code = generate_openscad_tool(tool_name, style, complexity)
         
         if code:
             # Test if the code renders
@@ -311,21 +319,21 @@ def process_items_from_list(item_list, max_items=None, style="realistic", comple
                 failed_count += 1
             
             # Add to dataset
-            add_item_to_dataset(dataset, item_name, code, render_success)
+            add_tool_to_dataset(dataset, tool_name, code, render_success)
             
         else:
             print(f"  ✗ Failed to generate code")
             failed_count += 1
             # Add failed entry to dataset
-            add_item_to_dataset(dataset, item_name, "", False, "Failed to generate OpenSCAD code")
+            add_tool_to_dataset(dataset, tool_name, "", False, "Failed to generate OpenSCAD code")
         
-        # Save dataset after each item (incremental saving)
+        # Save dataset after each tool (incremental saving)
         save_dataset(dataset, dataset_file)
         print(f"  Dataset updated: {successful_count} successful, {failed_count} failed")
         print()
     
     print(f"Processing complete!")
-    print(f"Total items processed: {len(dataset)}")
+    print(f"Total tools processed: {len(dataset)}")
     print(f"Successful generations: {successful_count}")
     print(f"Failed generations: {failed_count}")
     
@@ -336,21 +344,21 @@ def main():
     """Main function with command line interface."""
     import argparse
     
-    parser = argparse.ArgumentParser(description="Generate OpenSCAD household item models using AI")
-    parser.add_argument("item", nargs="?", help="Name of the household item to generate")
-    parser.add_argument("--list", action="store_true", help="Process items from list.json")
-    parser.add_argument("--max", type=int, help="Maximum number of items to process from list (default: all)")
+    parser = argparse.ArgumentParser(description="Generate OpenSCAD tool models using AI")
+    parser.add_argument("tool", nargs="?", help="Name of the tool to generate")
+    parser.add_argument("--list", action="store_true", help="Process tools from list.json")
+    parser.add_argument("--max", type=int, help="Maximum number of tools to process from list (default: all)")
     parser.add_argument("--style", choices=["realistic", "stylized", "minimal"], default="realistic", 
                        help="Style of the model")
     parser.add_argument("--complexity", choices=["simple", "medium", "detailed"], default="medium",
                        help="Complexity level")
-    parser.add_argument("--dataset", default="household_item_openscad_dataset.json", help="Dataset file path")
+    parser.add_argument("--dataset", default="tool_openscad_dataset.json", help="Dataset file path")
     parser.add_argument("--resume", action="store_true", help="Resume processing from where it left off")
     
     args = parser.parse_args()
     
     if args.list:
-        # Process items from the list.json file
+        # Process tools from the list.json file
         script_dir = os.path.dirname(os.path.abspath(__file__))
         list_file = os.path.join(script_dir, "list.json")
         
@@ -359,13 +367,13 @@ def main():
             return
         
         with open(list_file, 'r', encoding='utf-8-sig') as f:
-            items = json.load(f)
+            tool_list = json.load(f)
         
-        print(f"Loaded {len(items)} household items from {list_file}")
+        print(f"Loaded {len(tool_list)} tools from {list_file}")
         
-        # Process items sequentially
-        dataset = process_items_from_list(
-            items, 
+        # Process tools sequentially
+        dataset = process_tools_from_list(
+            tool_list, 
             max_items=args.max, 
             style=args.style, 
             complexity=args.complexity,
@@ -374,16 +382,16 @@ def main():
         
         print(f"\nDataset saved to: {args.dataset}")
         
-    elif args.item:
-        # Generate single item and add to dataset
-        print(f"Generating OpenSCAD model for: {args.item}")
+    elif args.tool:
+        # Generate single tool and add to dataset
+        print(f"Generating OpenSCAD model for: {args.tool}")
         print(f"Style: {args.style}, Complexity: {args.complexity}")
         
         # Load dataset
         dataset = load_dataset(args.dataset)
         
         # Generate code
-        code = generate_openscad_household_item(args.item, args.style, args.complexity)
+        code = generate_openscad_tool(args.tool, args.style, args.complexity)
         
         if code:
             # Test rendering
@@ -391,13 +399,13 @@ def main():
             print(f"Rendering test: {'✓ Success' if render_success else '✗ Failed'}")
             
             # Add to dataset
-            add_item_to_dataset(dataset, args.item, code, render_success)
+            add_tool_to_dataset(dataset, args.tool, code, render_success)
             save_dataset(dataset, args.dataset)
             
             print(f"✓ Added to dataset: {args.dataset}")
         else:
             print("✗ Failed to generate code")
-            add_item_to_dataset(dataset, args.item, "", False, "Failed to generate OpenSCAD code")
+            add_tool_to_dataset(dataset, args.tool, "", False, "Failed to generate OpenSCAD code")
             save_dataset(dataset, args.dataset)
     else:
         parser.print_help()
