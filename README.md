@@ -16,7 +16,7 @@ We have the following categories of objects
 - vehicles: ThomasTheMaker/Synthetic-Vehicles
 - food: ThomasTheMaker/Synthetic-Food
 - historical artifacts: ThomasTheMaker/Synthetic-Historical-Artifacts
-- mythical creatures: running...
+- mythical creatures: ThomasTheMaker/Synthetic-Mythical-Creatures
 - tech & electronics: ThomasTheMaker/Synthetic-Devices
 - tools: ThomasTheMaker/Synthetic-Tools
 - pokemon: ThomasTheMaker/Synthetic-Pokemon
