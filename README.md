@@ -14,9 +14,9 @@ We have the following categories of objects
 - household items: ThomasTheMaker/Synthetic-HouseholdItems
 - musical instruments: ThomasTheMaker/Synthetic-Musical-Instruments
 - vehicles: ThomasTheMaker/Synthetic-Vehicles
-- food: running...
+- food: ThomasTheMaker/Synthetic-Food
 - historical artifacts: ThomasTheMaker/Synthetic-Historical-Artifacts
-- mythical creatures: running
-- tech & electronics: running
-- tools: running...
-- pokemon: running...
+- mythical creatures: running...
+- tech & electronics: ThomasTheMaker/Synthetic-Devices
+- tools: ThomasTheMaker/Synthetic-Tools
+- pokemon: ThomasTheMaker/Synthetic-Pokemon
