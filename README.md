@@ -20,3 +20,7 @@ We have the following categories of objects
 - tech & electronics: ThomasTheMaker/Synthetic-Devices
 - tools: ThomasTheMaker/Synthetic-Tools
 - pokemon: ThomasTheMaker/Synthetic-Pokemon
+- toys: running
+- plants: running
+- furniture: running
+- mechanical components: running

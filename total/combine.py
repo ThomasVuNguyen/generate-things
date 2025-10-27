@@ -19,7 +19,11 @@ CATEGORY_TO_KEY = {
     "mythical_creatures": "mythical_creature",
     "tech_electronics": "electronic_device",
     "tools": "tool",
-    "pokemon": "pokemon"
+    "pokemon": "pokemon",
+    "furniture": "furniture",
+    "plants": "plant",
+    "mechanical_components": "mechanical_component",
+    "toys": "toy"
 }
 
 # Dataset file mapping
@@ -35,7 +39,11 @@ DATASET_FILES = {
     "mythical_creatures": "mythical_creature_openscad_dataset.json",
     "tech_electronics": "electronic_device_openscad_dataset.json",
     "tools": "tool_openscad_dataset.json",
-    "pokemon": "pokemon_openscad_dataset.json"
+    "pokemon": "pokemon_openscad_dataset.json",
+    "furniture": "furniture_openscad_dataset.json",
+    "plants": "plant_openscad_dataset.json",
+    "mechanical_components": "mechanical_component_openscad_dataset.json",
+    "toys": "toy_openscad_dataset.json"
 }
 
 def load_dataset(filepath):
