@@ -273,5 +273,10 @@
     "basic_shape": "cone_thick_walls",
     "openscad_code": "$fn = 32;\n\n// Parameters\nh = 100;          // cone height\nr1 = 50;          // bottom outer radius\nr2 = 0;           // top outer radius (point)\nwall = 5;         // wall thickness\n\n// Outer cone\ndifference() {\n    cylinder(h = h, r1 = r1, r2 = r2, center = false);\n    \n    // Inner hollow cone\n    translate([0, 0, wall])\n        cylinder(h = h - wall, r1 = r1 - wall, r2 = r2, center = false);\n}\n\n// Flatten bottom\ndifference() {\n    cylinder(h = wall, r1 = r1, r2 = r1, center = false);\n    cylinder(h = wall + 0.1, r1 = r1 - wall, r2 = r1 - wall, center = false);\n}",
     "renders": true
+  },
+  {
+    "basic_shape": "cone_smooth",
+    "openscad_code": "// Smooth cone with rounded base and tip\n$fn = 40;  // Smooth surfaces\n\n// Main cone body\ndifference() {\n    cylinder(h = 100, r1 = 50, r2 = 0, center = false);\n    // Hollow out slightly for smoother appearance\n    translate([0, 0, -1])\n        cylinder(h = 102, r1 = 47, r2 = 0, center = false);\n}\n\n// Rounded base\ntranslate([0, 0, -5])\n    difference() {\n        cylinder(h = 10, r1 = 50, r2 = 50, center = false);\n        cylinder(h = 10, r1 = 47, r2 = 47, center = false);\n    }\n\n// Rounded tip\ntranslate([0, 0, 99])\n    sphere(r = 3);",
+    "renders": true
   }
 ]
