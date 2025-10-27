@@ -24,3 +24,8 @@ We have the following categories of objects
 - plants: running
 - furniture: running
 - mechanical components: running
+= decorative art: running
+- kitchen appliances: running
+- natural objects: running
+- office supplies: running
+- sport equipment: running

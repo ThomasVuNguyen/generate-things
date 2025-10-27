@@ -23,7 +23,12 @@ CATEGORY_TO_KEY = {
     "furniture": "furniture",
     "plants": "plant",
     "mechanical_components": "mechanical_component",
-    "toys": "toy"
+    "toys": "toy",
+    "sports_equipment": "sports_equipment",
+    "office_supplies": "office_supply",
+    "kitchen_appliances": "kitchen_appliance",
+    "decorative_art": "decorative_art",
+    "natural_objects": "natural_object"
 }
 
 # Dataset file mapping
@@ -43,7 +48,12 @@ DATASET_FILES = {
     "furniture": "furniture_openscad_dataset.json",
     "plants": "plant_openscad_dataset.json",
     "mechanical_components": "mechanical_component_openscad_dataset.json",
-    "toys": "toy_openscad_dataset.json"
+    "toys": "toy_openscad_dataset.json",
+    "sports_equipment": "sports_equipment_openscad_dataset.json",
+    "office_supplies": "office_supply_openscad_dataset.json",
+    "kitchen_appliances": "kitchen_appliance_openscad_dataset.json",
+    "decorative_art": "decorative_art_openscad_dataset.json",
+    "natural_objects": "natural_object_openscad_dataset.json"
 }
 
 def load_dataset(filepath):
