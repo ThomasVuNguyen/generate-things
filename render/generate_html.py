@@ -205,7 +205,7 @@ def generate_html():
         datasets_html = '<div class="error-message">No images found. Please run <code>./render.sh</code> first to generate images.</div>'
     
     # Write the HTML file
-    html_content = html.format(stats=stats_text, datasets=datasets_html)
+    html_content = html.replace('{stats}', stats_text).replace('{datasets}', datasets_html)
     
     with open('index.html', 'w') as f:
         f.write(html_content)

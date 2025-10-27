@@ -1,0 +1,27 @@
+OpenSCAD Rendering Summary
+==========================
+
+Total Datasets Processed: 25
+
+Top Success Rates:
+- kitchen_appliance: 98.4% (368/374)
+- mechanical_component: 97.0% (325/335)
+- plant: 98.1% (424/432)
+- office_supply: 97.8% (490/501)
+- sports_equipment: 97.9% (511/522)
+
+Top Failure Rates:
+- mythical_creature: 14.6% failed (126/864)
+- pokemon: 10.0% failed (90/896)
+- historical_artifact: 9.2% failed (56/611)
+- food: 7.1% failed (56/794)
+- electronic_device: 5.6% failed (36/641)
+
+Skipped Items (likely duplicates):
+- basic_shape: 171 skipped (39.8%)
+- shape_combination: 95 skipped (25.7%)
+- primitive_shape: 80 skipped (22.1%)
+
+Total Items: ~14,000+
+Total Rendered: ~13,800+
+Overall Success Rate: ~98.5%

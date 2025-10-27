@@ -19,7 +19,6 @@ fi
 
 # Start the web server
 echo "Starting HTTP server on port $PORT..."
-echo "Opening http://localhost:$PORT in your browser..."
 
 # Use Python's built-in HTTP server in the background
 python3 -m http.server $PORT &
@@ -30,16 +29,22 @@ SERVER_PID=$!
 # Wait a moment for the server to start
 sleep 2
 
-# Open the browser (try different commands for different OS)
-if command -v xdg-open > /dev/null; then
-    xdg-open "http://localhost:$PORT" &
-elif command -v open > /dev/null; then
-    open "http://localhost:$PORT" &
+# Try to open the browser (silently fail if no display/browser available)
+if command -v xdg-open > /dev/null 2>&1; then
+    xdg-open "http://localhost:$PORT" 2>/dev/null &
+elif command -v open > /dev/null 2>&1; then
+    open "http://localhost:$PORT" 2>/dev/null &
 fi
 
 echo ""
-echo "✓ Server started on http://localhost:$PORT"
-echo "✓ Press Ctrl+C to stop the server"
+echo "=========================================="
+echo "✓ Server started successfully!"
+echo ""
+echo "  Access at: http://localhost:$PORT"
+echo "  Or: http://$(hostname -I | awk '{print $1}'):$PORT"
+echo ""
+echo "  Press Ctrl+C to stop the server"
+echo "=========================================="
 echo ""
 
 # Wait for the server process
