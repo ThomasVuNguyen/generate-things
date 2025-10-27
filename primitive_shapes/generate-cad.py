@@ -12,47 +12,42 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from inference.kimi import chat_with_kimi
 
 
-def generate_openscad_decorative_art(decorative_art_name, style="realistic", complexity="medium"):
+def generate_openscad_primitive_shape(primitive_shape_name, style="realistic", complexity="medium"):
     """
-    Generate OpenSCAD code for a decorative art piece using the Kimi model.
+    Generate OpenSCAD code for a primitive shape using the Kimi model.
     
     Args:
-        decorative_art_name (str): Name of the decorative art piece to generate
+        primitive_shape_name (str): Name of the primitive shape to generate
         style (str): Style of the model ("realistic", "stylized", "minimal")
         complexity (str): Complexity level ("simple", "medium", "detailed")
     
     Returns:
         str: Generated OpenSCAD code
     """
-    prompt = f"""Generate OpenSCAD code for a {decorative_art_name} furniture item in {style} style with {complexity} complexity.
+    prompt = f"""Generate OpenSCAD code for a {primitive_shape_name} primitive shape with {complexity} complexity.
 
 Requirements:
-- Use only basic OpenSCAD primitives (cube, sphere, cylinder, etc.)
-- Use transformations (translate, rotate, scale, mirror)
-- Use boolean operations (union, difference, intersection)
-- Use loops and modules for repetitive parts
-- Make it 3D printable (no overhangs, proper wall thickness ~2mm)
-- Include comments explaining each part
-- The model should be recognizable as a {decorative_art_name}
-- Size should be reasonable for 3D printing (roughly 50-150mm in largest dimension)
-- Include furniture-specific characteristics (structural elements, joints, details)
-- Use appropriate proportions and realistic dimensions
-
-Style guidelines for {style}:
-- Realistic: More detailed, faithful to furniture appearance with proper proportions
-- Stylized: Simplified but recognizable furniture features
-- Minimal: Very simple geometric shapes representing the furniture
+- This is a PRIMITIVE SHAPE - keep it SIMPLE and GEOMETRIC
+- Use the most direct approach: polygon() for 2D shapes, linear_extrude() or rotate_extrude() for 3D
+- Do NOT add legs, supports, or decorative elements - just the geometric shape itself
+- The shape should be the pure geometric form
+- Size should be reasonable (roughly 50-150mm in largest dimension)
+- Use proper OpenSCAD practices (polygon points, clean module organization)
+- Include minimal comments
 
 Complexity for {complexity}:
-- Simple: Basic shapes, 20-50 lines of code
-- Medium: Moderate detail, 50-150 lines of code  
-- Detailed: High detail, 150+ lines of code
+- Simple: Pure shape, 5-15 lines of code
+- Medium: With rounded edges or slight variations, 15-30 lines of code  
+- Detailed: With multiple features like holes, chamfers, or subdivisions, 30-60 lines of code
 
-Furniture-specific considerations:
-- Include decorative details (patterns, textures, artistic elements)
-- Use appropriate proportions for the decorative art piece
-- Include structural details (frames, supports, joints)
-- Consider typical furniture design and functionality
+Examples:
+- For "triangle": Create a simple triangular prism or extruded triangle
+- For "circle": Create a simple disk (cylinder or extruded circle)
+- For "star": Create a simple star polygon, optionally extruded
+- For "extruded_triangle": Use polygon() + linear_extrude()
+- For "rotate_extrusion_circle": Use circle() or polygon() + rotate_extrude()
+
+Keep it clean, geometric, and efficient. No unnecessary complexity.
 
 Output only the OpenSCAD code, no explanations or markdown formatting."""
 
@@ -60,7 +55,7 @@ Output only the OpenSCAD code, no explanations or markdown formatting."""
         response = chat_with_kimi(prompt, stream=False)
         return response.strip()
     except Exception as e:
-        print(f"Error generating OpenSCAD code for '{decorative_art_name}': {e}")
+        print(f"Error generating OpenSCAD code for '{primitive_shape_name}': {e}")
         return None
 
 
@@ -132,7 +127,7 @@ def save_openscad_code(code, food_name, output_dir="generated_models"):
     return filepath
 
 
-def load_dataset(dataset_file="food_openscad_dataset.json"):
+def load_dataset(dataset_file="primitive_shape_openscad_dataset.json"):
     """
     Load the existing dataset from file.
     
@@ -158,7 +153,7 @@ def load_dataset(dataset_file="food_openscad_dataset.json"):
     return []
 
 
-def save_dataset(dataset, dataset_file="food_openscad_dataset.json"):
+def save_dataset(dataset, dataset_file="primitive_shape_openscad_dataset.json"):
     """
     Save the dataset to file.
     
@@ -170,28 +165,28 @@ def save_dataset(dataset, dataset_file="food_openscad_dataset.json"):
         json.dump(dataset, f, indent=2, ensure_ascii=False)
 
 
-def add_decorative_art_to_dataset(dataset, decorative_art_name, openscad_code, render_success, error_message=None):
+def add_primitive_shape_to_dataset(dataset, primitive_shape_name, openscad_code, render_success, error_message=None):
     """
-    Add a decorative art piece entry to the dataset.
+    Add a primitive shape entry to the dataset.
     
     Args:
         dataset (list): The dataset list
-        decorative_art_name (str): Name of the decorative art piece
+        primitive_shape_name (str): Name of the primitive shape
         openscad_code (str): Generated OpenSCAD code
         render_success (bool): Whether the code renders successfully
         error_message (str): Error message if generation failed
     """
-    decorative_art_entry = {
-        "decorative_art": decorative_art_name,
+    primitive_shape_entry = {
+        "primitive_shape": primitive_shape_name,
         "openscad_code": openscad_code,
         "renders": render_success
     }
     
     # Only add error message if there's an error
     if error_message:
-        decorative_art_entry["error"] = error_message
+        primitive_shape_entry["error"] = error_message
     
-    dataset.append(decorative_art_entry)
+    dataset.append(primitive_shape_entry)
 
 
 def format_time_duration(seconds):
@@ -238,12 +233,12 @@ def calculate_eta(start_time, current_index, total_items):
     return elapsed_time, eta_time, remaining_time
 
 
-def process_decorative_art_from_list(decorative_art_list, max_items=None, style="realistic", complexity="medium", dataset_file="decorative_art_openscad_dataset.json"):
+def process_primitive_shape_from_list(primitive_shape_list, max_items=None, style="realistic", complexity="medium", dataset_file="primitive_shape_openscad_dataset.json"):
     """
-    Process furniture items from list sequentially, generating OpenSCAD code and testing rendering.
+    Process primitive shapes from list sequentially, generating OpenSCAD code and testing rendering.
     
     Args:
-        decorative_art_list (list): List of furniture item names
+        primitive_shape_list (list): List of primitive shape names
         max_items (int): Maximum number of items to process (None for all)
         style (str): Style for all models
         complexity (str): Complexity for all models
@@ -257,40 +252,40 @@ def process_decorative_art_from_list(decorative_art_list, max_items=None, style=
     
     # Determine how many items to process
     if max_items is None:
-        max_items = len(decorative_art_list)
+        max_items = len(primitive_shape_list)
     else:
-        max_items = min(max_items, len(decorative_art_list))
+        max_items = min(max_items, len(primitive_shape_list))
     
-    print(f"Processing {max_items} furniture items from list...")
+    print(f"Processing {max_items} primitive shapes from list...")
     print(f"Style: {style}, Complexity: {complexity}")
     print(f"Dataset file: {dataset_file}")
     print("-" * 60)
     
-    # Get list of already processed furniture items
-    processed_decorative_art = [entry["decorative_art"] for entry in dataset]
+    # Get list of already processed primitive shapes
+    processed_primitive_shape = [entry["primitive_shape"] for entry in dataset]
     
     successful_count = sum(1 for entry in dataset if entry.get("renders", False))
     failed_count = len(dataset) - successful_count
     
-    # Find the next furniture item to process
-    decorative_art_to_process = []
-    for decorative_art_name in decorative_art_list[:max_items]:
-        if decorative_art_name not in processed_decorative_art:
-            decorative_art_to_process.append(decorative_art_name)
+    # Find the next primitive shape to process
+    primitive_shape_to_process = []
+    for primitive_shape_name in primitive_shape_list[:max_items]:
+        if primitive_shape_name not in processed_primitive_shape:
+            primitive_shape_to_process.append(primitive_shape_name)
     
-    print(f"Found {len(processed_decorative_art)} already processed furniture items")
-    print(f"Will process {len(decorative_art_to_process)} new furniture items")
+    print(f"Found {len(processed_primitive_shape)} already processed primitive shapes")
+    print(f"Will process {len(primitive_shape_to_process)} new primitive shapes")
     
-    if len(decorative_art_to_process) == 0:
-        print("All furniture items have already been processed!")
+    if len(primitive_shape_to_process) == 0:
+        print("All primitive shapes have already been processed!")
         return dataset
     
     # Start timing
     start_time = time.time()
     
-    for i, decorative_art_name in enumerate(decorative_art_to_process):
+    for i, primitive_shape_name in enumerate(primitive_shape_to_process):
         # Calculate ETA
-        elapsed_time, eta_time, remaining_time = calculate_eta(start_time, i, len(decorative_art_to_process))
+        elapsed_time, eta_time, remaining_time = calculate_eta(start_time, i, len(primitive_shape_to_process))
         
         # Format time strings
         elapsed_str = format_time_duration(elapsed_time)
@@ -301,10 +296,10 @@ def process_decorative_art_from_list(decorative_art_list, max_items=None, style=
         else:
             time_info = f" | Elapsed: {elapsed_str}"
         
-        print(f"Processing [{i+1}/{len(decorative_art_to_process)}]: {decorative_art_name}{time_info}")
+        print(f"Processing [{i+1}/{len(primitive_shape_to_process)}]: {primitive_shape_name}{time_info}")
         
         # Generate OpenSCAD code
-        code = generate_openscad_decorative_art(decorative_art_name, style, complexity)
+        code = generate_openscad_primitive_shape(primitive_shape_name, style, complexity)
         
         if code:
             # Test if the code renders
@@ -319,21 +314,21 @@ def process_decorative_art_from_list(decorative_art_list, max_items=None, style=
                 failed_count += 1
             
             # Add to dataset
-            add_decorative_art_to_dataset(dataset, decorative_art_name, code, render_success)
+            add_primitive_shape_to_dataset(dataset, primitive_shape_name, code, render_success)
             
         else:
             print(f"  ✗ Failed to generate code")
             failed_count += 1
             # Add failed entry to dataset
-            add_decorative_art_to_dataset(dataset, decorative_art_name, "", False, "Failed to generate OpenSCAD code")
+            add_primitive_shape_to_dataset(dataset, primitive_shape_name, "", False, "Failed to generate OpenSCAD code")
         
-        # Save dataset after each furniture item (incremental saving)
+        # Save dataset after each primitive shape (incremental saving)
         save_dataset(dataset, dataset_file)
         print(f"  Dataset updated: {successful_count} successful, {failed_count} failed")
         print()
     
     print(f"Processing complete!")
-    print(f"Total furniture items processed: {len(dataset)}")
+    print(f"Total primitive shapes processed: {len(dataset)}")
     print(f"Successful generations: {successful_count}")
     print(f"Failed generations: {failed_count}")
     
@@ -345,20 +340,20 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description="Generate OpenSCAD furniture models using AI")
-    parser.add_argument("decorative_art", nargs="?", help="Name of the decorative art piece to generate")
-    parser.add_argument("--list", action="store_true", help="Process furniture items from list.json")
-    parser.add_argument("--max", type=int, help="Maximum number of furniture items to process from list (default: all)")
+    parser.add_argument("primitive_shape", nargs="?", help="Name of the primitive shape to generate")
+    parser.add_argument("--list", action="store_true", help="Process primitive shapes from list.json")
+    parser.add_argument("--max", type=int, help="Maximum number of primitive shapes to process from list (default: all)")
     parser.add_argument("--style", choices=["realistic", "stylized", "minimal"], default="realistic", 
                        help="Style of the model")
     parser.add_argument("--complexity", choices=["simple", "medium", "detailed"], default="medium",
                        help="Complexity level")
-    parser.add_argument("--dataset", default="decorative_art_openscad_dataset.json", help="Dataset file path")
+    parser.add_argument("--dataset", default="primitive_shape_openscad_dataset.json", help="Dataset file path")
     parser.add_argument("--resume", action="store_true", help="Resume processing from where it left off")
     
     args = parser.parse_args()
     
     if args.list:
-        # Process furniture items from the list.json file
+        # Process primitive shapes from the list.json file
         script_dir = os.path.dirname(os.path.abspath(__file__))
         list_file = os.path.join(script_dir, "list.json")
         
@@ -367,13 +362,13 @@ def main():
             return
         
         with open(list_file, 'r', encoding='utf-8-sig') as f:
-            decorative_art_list = json.load(f)
+            primitive_shape_list = json.load(f)
         
-        print(f"Loaded {len(decorative_art_list)} furniture items from {list_file}")
+        print(f"Loaded {len(primitive_shape_list)} primitive shapes from {list_file}")
         
-        # Process furniture items sequentially
-        dataset = process_decorative_art_from_list(
-            decorative_art_list, 
+        # Process primitive shapes sequentially
+        dataset = process_primitive_shape_from_list(
+            primitive_shape_list, 
             max_items=args.max, 
             style=args.style, 
             complexity=args.complexity,
@@ -382,16 +377,16 @@ def main():
         
         print(f"\nDataset saved to: {args.dataset}")
         
-    elif args.decorative_art:
-        # Generate single furniture item and add to dataset
-        print(f"Generating OpenSCAD model for: {args.decorative_art}")
+    elif args.primitive_shape:
+        # Generate single primitive shape and add to dataset
+        print(f"Generating OpenSCAD model for: {args.primitive_shape}")
         print(f"Style: {args.style}, Complexity: {args.complexity}")
         
         # Load dataset
         dataset = load_dataset(args.dataset)
         
         # Generate code
-        code = generate_openscad_decorative_art(args.decorative_art, args.style, args.complexity)
+        code = generate_openscad_primitive_shape(args.primitive_shape, args.style, args.complexity)
         
         if code:
             # Test rendering
@@ -399,13 +394,13 @@ def main():
             print(f"Rendering test: {'✓ Success' if render_success else '✗ Failed'}")
             
             # Add to dataset
-            add_decorative_art_to_dataset(dataset, args.decorative_art, code, render_success)
+            add_primitive_shape_to_dataset(dataset, args.primitive_shape, code, render_success)
             save_dataset(dataset, args.dataset)
             
             print(f"✓ Added to dataset: {args.dataset}")
         else:
             print("✗ Failed to generate code")
-            add_decorative_art_to_dataset(dataset, args.decorative_art, "", False, "Failed to generate OpenSCAD code")
+            add_primitive_shape_to_dataset(dataset, args.primitive_shape, "", False, "Failed to generate OpenSCAD code")
             save_dataset(dataset, args.dataset)
     else:
         parser.print_help()

@@ -1,0 +1,282 @@
+[
+  {
+    "shape_combination": "union_cube_sphere",
+    "openscad_code": "// union_cube_sphere.scad\n// Medium complexity: cube with rounded corners via sphere union\n\n$fn = 32;\n\nmodule rounded_cube_sphere() {\n    translate([0, 0, 50]) {\n        union() {\n            // Main cube body\n            cube([80, 80, 100], center = true);\n            \n            // Sphere on top\n            translate([0, 0, 50])\n                sphere(40);\n            \n            // Four smaller spheres at corners\n            translate([-30, -30, -50])\n                sphere(20);\n            translate([30, -30, -50])\n                sphere(20);\n            translate([-30, 30, -50])\n                sphere(20);\n            translate([30, 30, -50])\n                sphere(20);\n        }\n    }\n}\n\nrounded_cube_sphere();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cube_sphere_large",
+    "openscad_code": "// union_cube_sphere_large\n// Medium complexity: union of large cube with sphere and additional fillet features\n\ndifference() {\n    union() {\n        // Main cube\n        cube([100, 100, 100], center=true);\n        \n        // Sphere centered on top face\n        translate([0, 0, 50])\n            sphere(60);\n        \n        // Side sphere\n        translate([0, 50, 0])\n            sphere(40);\n    }\n    \n    // Central hole through cube\n    cylinder(h=120, r=15, center=true);\n    \n    // Corner cutout\n    translate([30, 30, 30])\n        cube([40, 40, 40]);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cube_sphere_small",
+    "openscad_code": "// union_cube_sphere_small.scad\n// Medium complexity: cube + sphere + rounded edges via small spheres\n\n$fn = 32;\n\nunion() {\n    // Main cube (60 mm)\n    cube([60, 60, 60], center = true);\n    \n    // Sphere centered on top face\n    translate([0, 0, 30])\n        sphere(d = 50);\n    \n    // Smaller spheres at each top corner for rounded edges\n    translate([30, 30, 30])\n        sphere(d = 15);\n    translate([-30, 30, 30])\n        sphere(d = 15);\n    translate([30, -30, 30])\n        sphere(d = 15);\n    translate([-30, -30, 30])\n        sphere(d = 15);\n    \n    // Small sphere centered at bottom for stability\n    translate([0, 0, -30])\n        sphere(d = 20);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cube_two_spheres",
+    "openscad_code": "// union_cube_two_spheres.scad\n\ncube_size = 60;\nsphere_r  = 30;\n\nunion() {\n    // Center cube\n    cube(cube_size, center = true);\n\n    // First sphere offset along X\n    translate([ cube_size/2 + sphere_r/2, 0, 0 ])\n        sphere(r = sphere_r);\n\n    // Second sphere offset along Y\n    translate([ 0, cube_size/2 + sphere_r/2, 0 ])\n        sphere(r = sphere_r);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_two_cubes",
+    "openscad_code": "// union_two_cubes\n// combines two cubes offset and rotated\n\nmodule union_two_cubes() {\n    union() {\n        // first cube at origin\n        cube([40, 40, 60], center = true);\n        \n        // second cube rotated 45° and translated\n        translate([25, 25, 0])\n            rotate([0, 0, 45])\n                cube([30, 30, 50], center = true);\n    }\n}\n\nunion_two_cubes();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_three_cubes",
+    "openscad_code": "// union_three_cubes.scad\n// Medium complexity: three cubes arranged in an L-shape with a small cube bridging\n\nunion() {\n    // Base cube\n    cube([40, 40, 20], center = true);\n    \n    // Vertical cube on top\n    translate([0, 0, 20])\n        cube([20, 20, 40], center = true);\n    \n    // Side cube\n    translate([30, 0, 0])\n        cube([20, 40, 20], center = true);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_four_cubes",
+    "openscad_code": "// union_four_cubes.scad\n\n// Four cubes united in a 2×2 grid with slight overlaps and one corner cube taller\ncube_size = 25;\ngap = 5;\noverlap = 2;\n\nunion() {\n    // Bottom-left\n    translate([0, 0, 0])\n        cube([cube_size, cube_size, cube_size]);\n\n    // Bottom-right\n    translate([cube_size + gap - overlap, 0, 0])\n        cube([cube_size, cube_size, cube_size]);\n\n    // Top-left\n    translate([0, cube_size + gap - overlap, 0])\n        cube([cube_size, cube_size, cube_size]);\n\n    // Top-right, taller\n    translate([cube_size + gap - overlap, cube_size + gap - overlap, 0])\n        cube([cube_size, cube_size, cube_size * 1.5]);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cube_column",
+    "openscad_code": "module union_cube_column() {\n    // main column body\n    union() {\n        // base cube\n        cube([60, 60, 20], center = true);\n        \n        // middle cylinder\n        translate([0, 0, 20])\n            cylinder(h = 80, d = 40, center = true);\n            \n        // top cube\n        translate([0, 0, 60])\n            cube([50, 50, 30], center = true);\n            \n        // decorative sphere on top\n        translate([0, 0, 75])\n            sphere(d = 20);\n    }\n}\n\nunion_cube_column();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cube_wall",
+    "openscad_code": "// union_cube_wall - wall made by unioning several cubes\n\ndifference() {\n    union() {\n        // base wall\n        cube([80, 10, 60], center=true);\n        \n        // left buttress\n        translate([-35, 0, 0])\n            cube([10, 15, 50], center=true);\n        \n        // right buttress\n        translate([35, 0, 0])\n            cube([10, 15, 50], center=true);\n        \n        // top crenelation row\n        for(i = [-30:10:30])\n            translate([i, 0, 35])\n                cube([8, 12, 8], center=true);\n    }\n    \n    // window cutout\n    translate([0, 0, 0])\n        cube([20, 12, 30], center=true);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cube_platform",
+    "openscad_code": "union() {\n    // Main platform cube\n    cube([80, 80, 10], center = true);\n    \n    // Side rails\n    translate([0, -45, 5])\n        cube([90, 10, 20], center = true);\n    \n    translate([0, 45, 5])\n        cube([90, 10, 20], center = true);\n    \n    // End caps\n    translate([-45, 0, 5])\n        cube([10, 70, 20], center = true);\n    \n    translate([45, 0, 5])\n        cube([10, 70, 20], center = true);\n    \n    // Corner posts\n    for (x = [-35:70:70])\n        for (y = [-35:70:70])\n            translate([x, y, 15])\n                cube([10, 10, 30], center = true);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cylinder_sphere",
+    "openscad_code": "// union_cylinder_sphere.scad\n\n// main cylinder\ncylinder(h = 60, r = 25, $fn = 50);\n\n// sphere on top\ntranslate([0, 0, 60])\n    sphere(r = 25, $fn = 50);\n\n// second smaller sphere inset half way\ntranslate([0, 0, 30])\n    sphere(r = 15, $fn = 50);\n\n// side cylinder intersecting main cylinder\ntranslate([25, 0, 30])\n    rotate([0, 90, 0])\n        cylinder(h = 50, r = 12, $fn = 40);",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cylinder_top_sphere",
+    "openscad_code": "union() {\n    cylinder(h=80, r=30, center=true, $fn=64);\n    \n    translate([0, 0, 40])\n    sphere(r=30, $fn=64);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cylinder_bottom_sphere",
+    "openscad_code": "// union_cylinder_bottom_sphere\n// Medium complexity: combine a vertical cylinder with a sphere at the bottom\n// plus a thin ring around the cylinder-sphere joint for added detail\n\nmodule union_cylinder_bottom_sphere() {\n    cylinder_h = 60;\n    cylinder_r = 25;\n    sphere_r   = 30;\n\n    union() {\n        // Main vertical cylinder\n        cylinder(h = cylinder_h, r = cylinder_r, $fn = 48);\n\n        // Sphere attached to cylinder base\n        translate([0, 0, -sphere_r])\n            sphere(r = sphere_r, $fn = 48);\n\n        // Decorative ring where cylinder meets sphere\n        translate([0, 0, 0])\n            rotate_extrude($fn = 48)\n                translate([cylinder_r, 0, 0])\n                    square([2, 5]);\n    }\n}\n\nunion_cylinder_bottom_sphere();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_two_cylinders",
+    "openscad_code": "// union_two_cylinders.scad\n// Two cylinders joined at 90° with fillet blend\n\n$fn = 32;\n\n// Main horizontal cylinder\ncylinder1();\nrotate([0, 90, 0])\n    cylinder2();\n\nmodule cylinder1() {\n    union() {\n        // Horizontal cylinder body\n        cylinder(h = 80, d = 30, center = true);\n        \n        // Vertical cylinder body\n        rotate([90, 0, 0])\n            cylinder(h = 70, d = 25, center = true);\n        \n        // Blend fillet between cylinders\n        translate([0, 0, 15])\n            rotate_extrude(angle = 90, $fn = 32)\n                translate([15, 0, 0])\n                    circle(r = 8);\n    }\n}\n\nmodule cylinder2() {\n    difference() {\n        // End cap on horizontal cylinder\n        translate([40, 0, 0])\n            rotate([0, 90, 0])\n                cylinder(h = 10, d = 35);\n                \n        // Hollow center\n        translate([40, 0, 0])\n            rotate([0, 90, 0])\n                cylinder(h = 12, d = 20);\n    }\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_three_cylinders",
+    "openscad_code": "// union_three_cylinders.scad\n\nunion() {\n    // Vertical cylinder\n    cylinder(h = 60, d = 30, center = true);\n    \n    // Horizontal cylinder along X\n    rotate([0, 90, 0])\n        cylinder(h = 60, d = 25, center = true);\n    \n    // Horizontal cylinder along Y, elevated\n    translate([0, 0, 20])\n        rotate([90, 0, 0])\n            cylinder(h = 60, d = 25, center = true);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cylinder_grid",
+    "openscad_code": "$fn = 32;\n\nunion() {\n    // Main 3x3 grid of cylinders\n    for (x = [0:2])\n        for (z = [0:2])\n            translate([x*30 - 30, 0, z*30 - 30])\n                cylinder(h = 60, d = 20);\n    \n    // Horizontal connecting rods\n    for (z = [0:2])\n        translate([0, 0, z*30 - 30])\n            rotate([0, 90, 0])\n                cylinder(h = 60, d = 10);\n    \n    // Vertical connecting rods\n    for (x = [0:2])\n        translate([x*30 - 30, 0, 0])\n            rotate([90, 0, 0])\n                cylinder(h = 60, d = 10);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cube_cylinder",
+    "openscad_code": "// union_cube_cylinder.scad\n// union of cube and cylinder with 45° rotation\n\n$fn = 36;\n\nunion() {\n    // main cube\n    cube([50, 50, 50], center = true);\n    \n    // cylinder rotated 45° on X axis\n    rotate([45, 0, 0])\n        cylinder(h = 70, d = 50, center = true);\n        \n    // second cylinder rotated 45° on Y axis for cross shape\n    rotate([0, 45, 0])\n        cylinder(h = 70, d = 50, center = true);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_box_cylinder",
+    "openscad_code": "// union_box_cylinder.scad\n// Medium complexity: union of box and two cylinders with offset and rotation\n\n$fn = 32;\n\n// Main box\nbox_w = 60;\nbox_d = 40;\nbox_h = 30;\n\n// Cylinders\ncyl_r = 15;\ncyl_h = 70;\noffset = 20;\n\nunion() {\n    // Base box\n    translate([0, 0, box_h/2])\n        cube([box_w, box_d, box_h], center=true);\n    \n    // Vertical cylinder on top\n    translate([offset, 0, box_h])\n        cylinder(h = cyl_h, r = cyl_r);\n    \n    // Horizontal cylinder across front\n    translate([0, -box_d/2 - cyl_r, box_h/2])\n        rotate([90, 0, 0])\n        cylinder(h = box_w + 2*cyl_r, r = cyl_r);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_box_column",
+    "openscad_code": "// union_box_column.scad\n// A box merged with a column on top\n\n$fn = 32;\n\nmodule union_box_column() {\n    // Main box base\n    difference() {\n        cube([60, 40, 30], center = true);\n        translate([0, 0, 14])\n            cube([50, 30, 3], center = true);\n    }\n\n    // Column on top\n    union() {\n        translate([0, 0, 15])\n            cylinder(h = 50, r = 15, center = true);\n        translate([0, 0, 40])\n            cylinder(h = 5, r = 18, center = true);\n    }\n\n    // Support rings\n    for (z = [25, 35]) {\n        translate([0, 0, z])\n            cylinder(h = 2, r = 20, center = true);\n    }\n}\n\nunion_box_column();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_box_support",
+    "openscad_code": "// union_box_support.scad\n// Medium complexity support structure combining box, cylinder and wedge\n\nunion() {\n    // Main box body\n    translate([0, 0, 10])\n        cube([60, 40, 20], center=true);\n    \n    // Front support cylinder\n    translate([0, -30, 0])\n        cylinder(h=40, d1=30, d2=20);\n    \n    // Side support wedge\n    translate([40, 0, 0])\n        rotate([0, 0, -30])\n            cube([30, 20, 15]);\n    \n    // Top mounting flange\n    translate([0, 0, 25])\n        difference() {\n            cube([70, 50, 5], center=true);\n            translate([0, 0, -1])\n                cube([50, 30, 7], center=true);\n        }\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cylinder_cone",
+    "openscad_code": "// union_cylinder_cone.scad\n\n$fn = 50;\n\nunion() {\n    // main cylinder\n    cylinder(h = 40, r = 25, center = true);\n\n    // cone on top\n    translate([0, 0, 20])\n        cylinder(h = 30, r1 = 25, r2 = 0, center = false);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cylinder_torus",
+    "openscad_code": "// union_cylinder_torus.scad\n\n$fn = 32;\n\n// Union of vertical cylinder and horizontal torus\nmodule union_cylinder_torus() {\n    union() {\n        // Central vertical cylinder\n        cylinder(h = 80, d = 40, center = true);\n\n        // Horizontal torus around middle\n        rotate([90, 0, 0])\n            torus(30, 12);\n    }\n}\n\n// Helper module for torus\nmodule torus(r_major, r_minor) {\n    rotate_extrude()\n        translate([r_major, 0, 0])\n            circle(r = r_minor);\n}\n\nunion_cylinder_torus();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cone_sphere",
+    "openscad_code": "// union_cone_sphere.scad\n// Medium complexity – cone and sphere union with subtle fillet\n\nr = 20;\nh = 60;\nsphere_r = 30;\nfillet_r = 3;\n\nmodule union_cone_sphere() {\n    union() {\n        // main cone\n        cylinder(h = h, r1 = r, r2 = 0, $fn = 50);\n\n        // main sphere sitting on tip\n        translate([0, 0, h])\n            sphere(r = sphere_r, $fn = 60);\n\n        // small fillet ring at join\n        translate([0, 0, h - fillet_r])\n            rotate_extrude($fn = 50)\n                translate([sphere_r - fillet_r, 0, 0])\n                    circle(r = fillet_r);\n    }\n}\n\nunion_cone_sphere();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_cone_cylinder",
+    "openscad_code": "// union_cone_cylinder.scad\n\nmodule union_cone_cylinder() {\n    union() {\n        // Main cylinder body\n        cylinder(h = 60, r = 25, $fn = 50);\n        \n        // Cone on top\n        translate([0, 0, 60])\n            cylinder(h = 40, r1 = 25, r2 = 0, $fn = 50);\n        \n        // Small decorative ring at junction\n        translate([0, 0, 58])\n            cylinder(h = 4, r = 28, $fn = 50);\n    }\n}\n\nunion_cone_cylinder();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_sphere_torus",
+    "openscad_code": "union_sphere_torus() {\n    $fn = 48;\n    \n    // Main sphere\n    sphere(30);\n    \n    // Torus around the equator\n    rotate([90, 0, 0])\n        translate([0, 0, 0])\n            torus(45, 8);\n    \n    // Smaller torus at 45 degrees\n    rotate([45, 0, 0])\n        translate([0, 0, 0])\n            torus(40, 6);\n    \n    // Torus at perpendicular angle\n    rotate([0, 90, 0])\n        translate([0, 0, 0])\n            torus(35, 7);\n}\n\nmodule torus(major, minor) {\n    rotate_extrude()\n        translate([major, 0, 0])\n            circle(r = minor);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_pyramid_base",
+    "openscad_code": "union_pyramid_base() {\n    // Main pyramid\n    pyramid();\n    \n    // Base with rounded corners\n    translate([0, 0, -5])\n        rounded_base();\n}\n\nmodule pyramid() {\n    union() {\n        // Main pyramid body\n        rotate([0, 0, 45])\n            linear_extrude(height = 60, scale = 0)\n                square(50, center = true);\n        \n        // Reinforcement base\n        translate([0, 0, -5])\n            cylinder(h = 5, r = 35, $fn = 4);\n    }\n}\n\nmodule rounded_base() {\n    difference() {\n        // Rounded square base\n        minkowski() {\n            square(70, center = true);\n            cylinder(h = 2, r = 8, $fn = 20);\n        }\n        \n        // Center hole for mounting\n        cylinder(h = 10, r = 10, $fn = 32);\n    }\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_pyramid_cube",
+    "openscad_code": "// union_pyramid_cube.scad\n// pyramid sitting atop a cube, joined with union\n\n$fn = 32;\n\nunion() {\n    // base cube\n    cube([60, 60, 60], center = true);\n    \n    // pyramid on top\n    translate([0, 0, 60])\n        cylinder(h = 50, r1 = 40, r2 = 0, center = false);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_pyramid_cylinder",
+    "openscad_code": "union_pyramid_cylinder();\n\nmodule union_pyramid_cylinder() {\n    union() {\n        // Square pyramid on top\n        translate([0, 0, 40])\n            cylinder(h = 50, r1 = 30, r2 = 0, $fn = 4);\n        \n        // Main cylinder\n        cylinder(h = 40, r = 30, $fn = 64);\n        \n        // Decorative base ring\n        translate([0, 0, -5])\n            cylinder(h = 5, r1 = 35, r2 = 30, $fn = 64);\n    }\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_dome_cylinder",
+    "openscad_code": "$fs = 1;\n$fa = 2;\n\n// Union of a dome (sphere cap) and a cylinder\nunion() {\n    // Dome: top half of sphere\n    intersection() {\n        sphere(d = 60);\n        translate([0, 0, 30])\n            cube(60, center = true);\n    }\n    \n    // Cylinder below the dome\n    cylinder(h = 40, d = 60, center = false);\n    \n    // Optional fillet ring (small torus) to smooth the join\n    rotate_extrude()\n        translate([30, 0, 0])\n            circle(d = 4);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_dome_box",
+    "openscad_code": "// union_dome_box.scad\n// A box with domed top created via union()\n\n// Domed lid\ntranslate([0, 0, 30]) {\n    union() {\n        cylinder(h = 5, r = 30, $fn = 64);\n        translate([0, 0, 5])\n            sphere(r = 30, $fn = 64);\n    }\n}\n\n// Box body\ndifference() {\n    cube([60, 60, 30], center = true);\n    translate([0, 0, -5])\n        cube([54, 54, 30], center = true);\n}\n\n// Optional alignment pins\ntranslate([20, 20, 15])\n    cylinder(h = 20, r = 3, $fn = 16);\ntranslate([-20, 20, 15])\n    cylinder(h = 20, r = 3, $fn = 16);\ntranslate([20, -20, 15])\n    cylinder(h = 20, r = 3, $fn = 16);\ntranslate([-20, -20, 15])\n    cylinder(h = 20, r = 3, $fn = 16);",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_dome_sphere",
+    "openscad_code": "// union_dome_sphere.scad\n// dome (hemisphere) on top of a sphere with a connecting cylinder\n\nmodule dome_sphere() {\n    union() {\n        // bottom sphere\n        translate([0, 0, 0])\n            sphere(d = 60, $fn = 64);\n            \n        // connecting cylinder\n        translate([0, 0, 30])\n            cylinder(h = 10, d = 60, $fn = 64);\n            \n        // dome (hemisphere)\n        translate([0, 0, 40])\n            sphere(d = 60, $fn = 64);\n        \n        // small decorative ring at joint\n        translate([0, 0, 39])\n            cylinder(h = 2, d1 = 70, d2 = 60, $fn = 64);\n    }\n}\n\ndome_sphere();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_funnel_base",
+    "openscad_code": "// union_funnel_base: funnel + base plate + mounting holes\nmodule union_funnel_base() {\n    union() {\n        // funnel cone\n        cylinder(h = 60, r1 = 50, r2 = 15, $fn = 64);\n\n        // wide base plate\n        translate([0, 0, -5])\n            cylinder(h = 5, r = 60, $fn = 64);\n\n        // mounting posts\n        for (a = [0:120:359]) {\n            rotate([0, 0, a])\n                translate([45, 0, -5])\n                    cylinder(h = 15, r = 4, $fn = 16);\n        }\n    }\n}\n\nunion_funnel_base();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_funnel_cylinder",
+    "openscad_code": "union_funnel_cylinder() {\n    union() {\n        // funnel\n        cylinder(h1 = 20, h2 = 5, r1 = 30, r2 = 10, center = true);\n        \n        // cylinder base\n        translate([0, 0, -12.5])\n            cylinder(h = 25, r = 10, center = true);\n        \n        // optional ring shoulder\n        difference() {\n            translate([0, 0, -20])\n                cylinder(h = 5, r = 12, center = true);\n            translate([0, 0, -20])\n                cylinder(h = 5, r = 10, center = true);\n        }\n    }\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_bell_top",
+    "openscad_code": "union() {\n    // Main bell body\n    cylinder(h = 50, r1 = 40, r2 = 20, $fn = 100);\n    \n    // Top sphere dome\n    translate([0, 0, 50])\n    sphere(r = 20, $fn = 100);\n    \n    // Hanging loop\n    translate([0, 0, 70])\n    rotate([90, 0, 0])\n    torus(5, 15, $fn = 50);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_bowl_base",
+    "openscad_code": "// union_bowl_base\n// Base for a small bowl: flat bottom with rounded top created via union\n\ndifference() {\n    union() {\n        // Flat base disk\n        cylinder(h = 5, d = 80, $fn = 48);\n        \n        // Rounded upper bowl\n        translate([0, 0, 2.5])\n            scale([1, 1, 0.6])\n            sphere(d = 80, $fn = 48);\n    }\n    \n    // Hollow out center\n    translate([0, 0, -1])\n        cylinder(h = 50, d = 70, $fn = 48);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_pill_cap",
+    "openscad_code": "union_pill_cap();\n\nmodule union_pill_cap() {\n    // Main cap body\n    difference() {\n        union() {\n            // Cylindrical base\n            cylinder(h=20, d=40, $fn=60);\n            \n            // Rounded top dome\n            translate([0, 0, 20])\n                sphere(d=40, $fn=60);\n                \n            // Grip ring\n            translate([0, 0, 10])\n                cylinder(h=5, d1=45, d2=45, $fn=60);\n        }\n        \n        // Internal cavity\n        translate([0, 0, -1])\n            cylinder(h=25, d=36, $fn=60);\n            \n        // Internal dome cavity\n        translate([0, 0, 20])\n            sphere(d=36, $fn=60);\n    }\n    \n    // Thread starter\n    difference() {\n        cylinder(h=5, d=38, $fn=60);\n        cylinder(h=5.5, d=34, $fn=60);\n    }\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_pill_body",
+    "openscad_code": "// union_pill_body.scad\n// Medium-complexity pill-shaped capsule using union and difference\n\n$fn = 32;\n\nmodule union_pill_body() {\n    // Main pill body\n    union() {\n        // Cylindrical mid-section\n        cylinder(h = 60, r = 20, center = true);\n        \n        // Left hemispherical cap\n        translate([-30, 0, 0])\n            sphere(r = 20);\n            \n        // Right hemispherical cap\n        translate([30, 0, 0])\n            sphere(r = 20);\n    }\n    \n    // Optional through-hole (difference)\n    difference() {\n        union_pill_body();\n        rotate([0, 90, 0])\n            cylinder(h = 100, r = 8, center = true);\n    }\n}\n\nunion_pill_body();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_pin_head",
+    "openscad_code": "// union_pin_head.scad\n// Union of cylinder and sphere to form a pin head\n\n// Pin head\nunion() {\n    // Main cylindrical shaft\n    cylinder(h = 40, d = 10, $fn = 32);\n    \n    // Top sphere\n    translate([0, 0, 40])\n        sphere(d = 12, $fn = 32);\n    \n    // Flat base disk\n    translate([0, 0, -2])\n        cylinder(h = 2, d = 14, $fn = 32);\n}\n\n// Optional chamfer at sphere-cylinder junction\ntranslate([0, 0, 38])\n    cylinder(h = 2, d1 = 10, d2 = 12, $fn = 32);",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_pin_shaft",
+    "openscad_code": "// union_pin_shaft: combines a pin head and shaft using union\n\n$fn = 32;\n\nmodule union_pin_shaft() {\n    union() {\n        // Cylindrical head\n        cylinder(h = 15, d = 30, center = false);\n        \n        // Tapered shaft\n        cylinder(h = 80, d1 = 20, d2 = 14, center = false);\n        \n        // Chamfer at shaft base\n        translate([0, 0, 80])\n            cylinder(h = 3, d1 = 14, d2 = 10, center = false);\n    }\n}\n\nunion_pin_shaft();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_bolt_head",
+    "openscad_code": "module union_bolt_head(d=40,h=20,hex=30){\n    // Main hex head\n    union(){\n        cylinder(d1=hex,d2=hex,h=h,$fn=6);\n        \n        // Top rounded dome\n        translate([0,0,h])\n            sphere(d=hex,$fn=30);\n        \n        // Washer base\n        translate([0,0,-2])\n            cylinder(d=hex+8,h=2,$fn=30);\n    }\n}\n\nunion_bolt_head();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_bolt_shaft",
+    "openscad_code": "// union_bolt_shaft\n$fn = 32;\n\nmodule bolt_shaft() {\n    union() {\n        // bolt head - hex\n        cylinder(h = 10, r1 = 12, r2 = 12, $fn = 6);\n        \n        // shaft - threaded\n        cylinder(h = 60, r = 7);\n        \n        // shaft tip - chamfer\n        translate([0, 0, 60])\n            cylinder(h = 5, r1 = 7, r2 = 0);\n    }\n    \n    // threaded detail grooves\n    for (i = [1:10]) {\n        translate([0, 0, 5 + i * 5])\n            rotate([0, 0, i * 15])\n            difference() {\n                cylinder(h = 3, r = 7.5);\n                cylinder(h = 3, r = 6.5);\n            }\n    }\n}\n\nbolt_shaft();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_nut_body",
+    "openscad_code": "module union_nut_body() {\n    // Main hex body\n    union() {\n        // Hex prism\n        cylinder(h = 30, r = 25, $fn = 6);\n        \n        // Top collar\n        translate([0, 0, 30])\n            cylinder(h = 5, r1 = 25, r2 = 30, $fn = 6);\n        \n        // Bottom collar\n        translate([0, 0, -5])\n            cylinder(h = 5, r1 = 30, r2 = 25, $fn = 6);\n        \n        // Central reinforcing ring\n        translate([0, 0, 10])\n            cylinder(h = 10, r = 20, $fn = 6);\n    }\n}\n\nunion_nut_body();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_nut_hex",
+    "openscad_code": "// union_nut_hex.scad\n// Hex nut created by unioning a hexagonal prism with a chamfered cylinder\n\n$fn = 6;\n\n// Main hexagonal body\ndifference() {\n    cylinder(h = 15, r = 10);\n    \n    // Central threaded hole\n    cylinder(h = 20, r = 5.5);\n}\n\n// Chamfered top edge\nunion() {\n    translate([0, 0, 7.5])\n        cylinder(h = 2.5, r1 = 10, r2 = 8);\n    \n    // Chamfered bottom edge\n    translate([0, 0, 0])\n        cylinder(h = 2.5, r1 = 8, r2 = 10);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_washer_round",
+    "openscad_code": "// union_washer_round.scad\n// combines washer and rounded elements via union\n\nmodule union_washer_round() {\n    // main washer body\n    washer = difference() {\n        cylinder(h = 4, r = 30, $fn = 60);\n        cylinder(h = 5, r = 12, $fn = 60);\n    };\n\n    // rounded top cap\n    cap = translate([0, 0, 4])\n        cylinder(h = 4, r1 = 30, r2 = 28, $fn = 60);\n\n    // rounded bottom cap\n    base = translate([0, 0, -4])\n        cylinder(h = 4, r1 = 28, r2 = 30, $fn = 60);\n\n    union() {\n        washer;\n        cap;\n        base;\n    }\n}\n\nunion_washer_round();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_washer_square",
+    "openscad_code": "// Square washer made by subtracting two squares from a larger square\nmodule union_washer_square(outer=60, inner=30, thick=5) {\n    difference() {\n        // Main square plate\n        cube([outer, outer, thick], center=true);\n        \n        // Central square hole\n        cube([inner, inner, thick+2], center=true);\n        \n        // Optional corner holes for mounting\n        for(x=[-1,1], y=[-1,1]) {\n            translate([x*outer/3, y*outer/3, 0])\n                cylinder(h=thick+2, r=5, $fn=20);\n        }\n    }\n}\n\nunion_washer_square();",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_spacer_round",
+    "openscad_code": "// union_spacer_round: a round spacer created by unioning a central cylinder\n// with two flanges (top & bottom) and four radial gussets for stiffness\n\n$fn = 48;\n\n// Central hollow shaft\ndifference() {\n    cylinder(h = 40, d = 30);\n    translate([0, 0, -1])\n        cylinder(h = 42, d = 16);\n}\n\n// Bottom flange\ntranslate([0, 0, -5])\n    cylinder(h = 10, d = 60);\n\n// Top flange\ntranslate([0, 0, 35])\n    cylinder(h = 10, d = 60);\n\n// Radial gussets (4× 90° apart)\nfor (a = [0:90:270]) {\n    rotate([0, 0, a])\n        translate([30, -2.5, 10])\n            cube([15, 5, 20]);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_spacer_square",
+    "openscad_code": "// union_spacer_square.scad\n// Medium-complexity square spacer with mounting holes and chamfers\n\n$fn = 50;\n\n// Main square plate\ndifference() {\n    union() {\n        // Main body\n        linear_extrude(height = 8)\n            offset(r = 2)\n                square(60, center = true);\n\n        // Top rim\n        translate([0, 0, 8])\n            cylinder(h = 3, r = 35);\n    }\n\n    // Central hole\n    translate([0, 0, -1])\n        cylinder(h = 12, r = 15);\n\n    // Corner holes\n    for (x = [-25, 25])\n        for (y = [-25, 25])\n            translate([x, y, -1])\n                cylinder(h = 12, r = 3.5);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_bushing_outer",
+    "openscad_code": "// union_bushing_outer.scad\n// Medium-complexity bushing outer shell formed by a union of shapes\n\n$fn = 36;\n\n// Main cylindrical sleeve\nunion() {\n    // Outer tube\n    difference() {\n        cylinder(h = 40, d = 60, center = true);\n        cylinder(h = 42, d = 50, center = true);\n    }\n\n    // Top flange\n    translate([0, 0, 20])\n        difference() {\n            cylinder(h = 6, d = 80, center = false);\n            cylinder(h = 7, d = 60, center = false);\n        }\n\n    // Bottom flange\n    translate([0, 0, -26])\n        difference() {\n            cylinder(h = 6, d = 80, center = false);\n            cylinder(h = 7, d = 60, center = false);\n        }\n\n    // Reinforcement ring\n    translate([0, 0, 0])\n        cylinder(h = 20, d = 70, center = true);\n\n    // Mounting ears (X direction)\n    translate([40, 0, 5])\n        cube([20, 20, 10], center = true);\n    translate([-40, 0, 5])\n        cube([20, 20, 10], center = true);\n\n    // Mounting ears (Y direction)\n    translate([0, 40, -5])\n        cube([20, 20, 10], center = true);\n    translate([0, -40, -5])\n        cube([20, 20, 10], center = true);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_bushing_inner",
+    "openscad_code": "union_bushing_inner() {\n    difference() {\n        union() {\n            cylinder(h = 30, r = 25, $fn = 64);\n            translate([0, 0, 30]) cylinder(h = 20, r1 = 25, r2 = 20, $fn = 64);\n        }\n        translate([0, 0, -1]) cylinder(h = 52, r = 15, $fn = 64);\n        translate([0, 0, 10]) rotate([90, 0, 0]) cylinder(h = 50, r = 7, $fn = 32);\n    }\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_mounting_block",
+    "openscad_code": "union_mounting_block() {\n    $fn = 50;\n\n    difference() {\n        union() {\n            // Main block with rounded top\n            hull() {\n                cube([40, 40, 15], center=true);\n                translate([0, 0, 10])\n                    cylinder(d=40, h=10, center=true);\n            }\n\n            // Mounting flanges\n            translate([-35, 0, 0])\n                cube([25, 20, 8], center=true);\n            translate([35, 0, 0])\n                cube([25, 20, 8], center=true);\n        }\n\n        // Mounting holes\n        translate([-35, 0, 0])\n            cylinder(d=6, h=10, center=true);\n        translate([35, 0, 0])\n            cylinder(d=6, h=10, center=true);\n\n        // Center clearance\n        translate([0, 0, 5])\n            cylinder(d=15, h=20, center=true);\n    }\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_mounting_plate",
+    "openscad_code": "union_mounting_plate();\n\nmodule union_mounting_plate() {\n    // Main plate\n    union() {\n        difference() {\n            cube([80, 60, 4], center=true);\n            translate([0, 0, 2]) cube([70, 50, 4], center=true);\n        }\n        \n        // Mounting tabs\n        translate([-40, 0, 0]) cube([10, 20, 2], center=true);\n        translate([40, 0, 0]) cube([10, 20, 2], center=true);\n        translate([0, -30, 0]) cube([20, 10, 2], center=true);\n        translate([0, 30, 0]) cube([20, 10, 2], center=true);\n        \n        // Reinforcement ribs\n        translate([0, 0, -1]) cube([76, 2, 2], center=true);\n        translate([0, 0, -1]) cube([2, 56, 2], center=true);\n        \n        // Corner gussets\n        for(x = [-35, 35])\n        for(y = [-25, 25])\n        translate([x, y, 1]) rotate([0, 0, 45]) cube([8, 8, 2], center=true);\n    }\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_bracket_l_shape",
+    "openscad_code": "// union_bracket_l_shape.scad\n\ndifference() {\n    union() {\n        // vertical arm\n        cube([10, 10, 60], center = false);\n        \n        // horizontal arm\n        translate([0, 0, -40])\n            cube([40, 10, 10], center = false);\n    }\n    \n    // mounting hole vertical\n    translate([5, 5, 30])\n        cylinder(h = 12, d = 5, center = true);\n    \n    // mounting hole horizontal\n    translate([30, 5, -35])\n        cylinder(h = 12, d = 5, center = true);\n    \n    // lightening cutout vertical\n    translate([5, 5, 45])\n        cube([7, 7, 25], center = true);\n    \n    // lightening cutout horizontal\n    translate([20, 5, -35])\n        cube([30, 7, 7], center = true);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_bracket_t_shape",
+    "openscad_code": "// union_bracket_t_shape.scad\n// T-shaped bracket made by unioning three blocks\n\n$fn=32;\n\n// vertical post\nunion() {\n    // vertical stem\n    translate([0, 0, 25])\n        cube([20, 15, 50], center=true);\n    \n    // horizontal top bar\n    translate([0, 0, 60])\n        cube([60, 15, 20], center=true);\n    \n    // base plate\n    translate([0, 0, 0])\n        cube([40, 30, 5], center=true);\n    \n    // two gusset supports\n    translate([10, 0, 30])\n        rotate([0, 45, 0])\n        cube([15, 15, 5], center=true);\n    translate([-10, 0, 30])\n        rotate([0, -45, 0])\n        cube([15, 15, 5], center=true);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_bracket_u_shape",
+    "openscad_code": "// union_bracket_u_shape.scad\n// U-shaped bracket with mounting holes\n\nwidth = 80;\nheight = 60;\ndepth = 20;\nwall = 6;\nhole_d = 5;\nslot_w = 30;\n\ndifference() {\n    union() {\n        // Left arm\n        translate([-width/2 + wall/2, 0, 0])\n            cube([wall, height, depth], center=true);\n            \n        // Right arm\n        translate([width/2 - wall/2, 0, 0])\n            cube([wall, height, depth], center=true);\n            \n        // Base\n        translate([0, -height/2 + wall/2, 0])\n            cube([width, wall, depth], center=true);\n    }\n    \n    // Mounting holes\n    translate([-width/4, -height/2 + wall + 2, 0])\n        rotate([90, 0, 0])\n            cylinder(h=depth+2, d=hole_d, center=true);\n            \n    translate([width/4, -height/2 + wall + 2, 0])\n        rotate([90, 0, 0])\n            cylinder(h=depth+2, d=hole_d, center=true);\n            \n    // Center slot\n    translate([0, 0, 0])\n        cube([slot_w, height + 2, depth + 2], center=true);\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_frame_four_posts",
+    "openscad_code": "// union_frame_four_posts.scad\n\n// overall frame size\nframe_w = 100;\nframe_d = 80;\nframe_h = 60;\n\n// post size\npost_r = 5;\npost_h = 70;\n\n// top & bottom rails\nrail_t = 4;\n\nmodule frame_with_posts() {\n    // four vertical posts\n    for (x = [-1, 1], y = [-1, 1])\n        translate([x * (frame_w/2 - post_r), y * (frame_d/2 - post_r), 0])\n            cylinder(r = post_r, h = post_h);\n\n    // bottom plate\n    translate([0, 0, 0])\n        cube([frame_w, frame_d, rail_t], center = true);\n\n    // top plate\n    translate([0, 0, post_h - rail_t])\n        cube([frame_w, frame_d, rail_t], center = true);\n}\n\nunion() {\n    frame_with_posts();\n}",
+    "renders": true
+  },
+  {
+    "shape_combination": "union_frame_cross_bar",
+    "openscad_code": "// union_frame_cross_bar.scad\n// Two perpendicular bars joined by a central cube\n\nbar_len = 120;\nbar_wid = 12;\nbar_thk = 8;\ncube_size = 20;\n\nmodule union_frame_cross_bar() {\n    union() {\n        // horizontal bar\n        cube([bar_len, bar_wid, bar_thk], center = true);\n\n        // vertical bar\n        cube([bar_wid, bar_len, bar_thk], center = true);\n\n        // central connecting cube\n        cube([cube_size, cube_size, bar_thk + 6], center = true);\n\n        // corner reinforcements\n        translate([bar_len/2 - 10, bar_len/2 - 10, 0])\n            cube([10, 10, bar_thk + 6], center = true);\n        translate([-bar_len/2 + 10, bar_len/2 - 10, 0])\n            cube([10, 10, bar_thk + 6], center = true);\n        translate([bar_len/2 - 10, -bar_len/2 + 10, 0])\n            cube([10, 10, bar_thk + 6], center = true);\n        translate([-bar_len/2 + 10, -bar_len/2 + 10, 0])\n            cube([10, 10, bar_thk + 6], center = true);\n    }\n}\n\nunion_frame_cross_bar();",
+    "renders": true
+  }
+]

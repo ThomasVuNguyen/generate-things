@@ -29,3 +29,6 @@ We have the following categories of objects
 - natural objects: ThomasTheMaker/Synthetic-Natural-Object
 - office supplies: ThomasTheMaker/Synthetic-Office-Supply
 - sport equipment: ThomasTheMaker/Synthetic-Sport-Equipment
+- basic shapes: 
+- primitive shapes: 
+- shape combinations: 

@@ -28,7 +28,10 @@ CATEGORY_TO_KEY = {
     "office_supplies": "office_supply",
     "kitchen_appliances": "kitchen_appliance",
     "decorative_art": "decorative_art",
-    "natural_objects": "natural_object"
+    "natural_objects": "natural_object",
+    "basic_shapes": "basic_shape",
+    "primitive_shapes": "primitive_shape",
+    "shape_combinations": "shape_combination"
 }
 
 # Dataset file mapping
@@ -53,7 +56,10 @@ DATASET_FILES = {
     "office_supplies": "office_supply_openscad_dataset.json",
     "kitchen_appliances": "kitchen_appliance_openscad_dataset.json",
     "decorative_art": "decorative_art_openscad_dataset.json",
-    "natural_objects": "natural_object_openscad_dataset.json"
+    "natural_objects": "natural_object_openscad_dataset.json",
+    "basic_shapes": "basic_shape_openscad_dataset.json",
+    "primitive_shapes": "primitive_shape_openscad_dataset.json",
+    "shape_combinations": "shape_combination_openscad_dataset.json"
 }
 
 def load_dataset(filepath):

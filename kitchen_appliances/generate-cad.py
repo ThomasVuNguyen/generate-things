@@ -267,7 +267,7 @@ def process_kitchen_appliance_from_list(kitchen_appliance_list, max_items=None, 
     print("-" * 60)
     
     # Get list of already processed kitchen appliances
-    processed_kitchen_appliance = [entry["furniture"] for entry in dataset]
+    processed_kitchen_appliance = [entry["kitchen_appliance"] for entry in dataset]
     
     successful_count = sum(1 for entry in dataset if entry.get("renders", False))
     failed_count = len(dataset) - successful_count

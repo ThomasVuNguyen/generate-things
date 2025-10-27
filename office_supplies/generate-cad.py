@@ -267,7 +267,7 @@ def process_office_supply_from_list(office_supply_list, max_items=None, style="r
     print("-" * 60)
     
     # Get list of already processed furniture items
-    processed_office_supply = [entry["furniture"] for entry in dataset]
+    processed_office_supply = [entry["office_supply"] for entry in dataset]
     
     successful_count = sum(1 for entry in dataset if entry.get("renders", False))
     failed_count = len(dataset) - successful_count

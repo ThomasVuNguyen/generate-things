@@ -267,7 +267,7 @@ def process_sports_equipment_from_list(sports_equipment_list, max_items=None, st
     print("-" * 60)
     
     # Get list of already processed furniture items
-    processed_sports_equipment = [entry["furniture"] for entry in dataset]
+    processed_sports_equipment = [entry["sports_equipment"] for entry in dataset]
     
     successful_count = sum(1 for entry in dataset if entry.get("renders", False))
     failed_count = len(dataset) - successful_count

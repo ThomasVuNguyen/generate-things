@@ -1,0 +1,282 @@
+[
+  {
+    "primitive_shape": "triangle",
+    "openscad_code": "module triangle_rounded(h = 30, r = 3, w = 100) {\n    // equilateral triangle with rounded corners\n    p = [\n        [0, w * sqrt(3)/3],           // top\n        [-w/2, -w * sqrt(3)/6],       // bottom left\n        [ w/2, -w * sqrt(3)/6]        // bottom right\n    ];\n\n    // offset inward then outward to round corners\n    linear_extrude(height = h)\n        offset(r = r)\n            offset(r = -r)\n                polygon(points = p);\n}\n\ntriangle_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "triangle_equilateral",
+    "openscad_code": "module triangle_equilateral(h = 10, side = 60, r = 3) {\n    // 2D rounded equilateral triangle\n    a = side;\n    h_tri = sqrt(3)/2 * a;\n    x1 = -a/2;\n    y1 = -h_tri/3;\n    x2 = a/2;\n    y2 = -h_tri/3;\n    x3 = 0;\n    y3 = 2*h_tri/3;\n\n    // Offset points for rounded corners\n    offset = r * tan(30);\n    \n    triangle_pts = [\n        [x1 + offset, y1],\n        [x2 - offset, y1],\n        [x2, y1 + offset],\n        [x2 - offset/sqrt(3), y3 - offset],\n        [x3, y3 - offset],\n        [x1 + offset/sqrt(3), y3 - offset],\n        [x1, y1 + offset]\n    ];\n\n    linear_extrude(height = h)\n        polygon(points = triangle_pts);\n}\n\ntriangle_equilateral();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "triangle_isosceles",
+    "openscad_code": "module triangle_isosceles(base=80, height=60, thickness=10, radius=5) {\n    // 2D triangle with rounded corners\n    p = [\n        [-base/2, -height/3],\n        [0, height*2/3],\n        [base/2, -height/3]\n    ];\n    \n    // Offset for rounded corners then extrude\n    offset(r=radius)\n        polygon(p);\n    \n    linear_extrude(height=thickness, center=true)\n        offset(r=radius)\n            polygon(p);\n}\n\ntriangle_isosceles();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "triangle_right",
+    "openscad_code": "module triangle_right(h = 20, a = 60, b = 80, r = 5) {\n    // 2D right-triangle profile with rounded corner\n    offset(r = r) polygon([[0,0], [a,0], [0,b]]);\n    \n    // Extrude to 3D\n    linear_extrude(height = h, center = true)\n        offset(r = r) polygon([[0,0], [a,0], [0,b]]);\n}\n\n// Render\ntriangle_right();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "triangle_acute",
+    "openscad_code": "module triangle_acute(h = 20, r = 5, center = false) {\n    // Define an acute triangle (all angles < 90°)\n    pts = [\n        [0, 0],\n        [100, 0],\n        [70, 80]   // Acute top vertex\n    ];\n\n    // Rounded 2D outline\n    offset(r = r) polygon(pts);\n\n    // Extrude to 3D\n    linear_extrude(height = h, center = center, convexity = 10)\n        offset(r = -r) polygon(pts);\n}\n\ntriangle_acute();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "triangle_obtuse",
+    "openscad_code": "module triangle_obtuse(h = 20, round = 3) {\n    // obtuse triangle profile (base 90, height 60, obtuse angle ~120°)\n    pts = [\n        [0, 0],\n        [90, 0],\n        [15, 60]\n    ];\n\n    // 2D rounded triangle\n    offset(r = round) polygon(pts);\n\n    // extrude to 3D with rounded top edges\n    linear_extrude(height = h, center = true, convexity = 10)\n        offset(r = round) polygon(pts);\n}\n\ntriangle_obtuse();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "triangle_3_4_5",
+    "openscad_code": "module triangle_3_4_5(h = 20, r = 2) {\n    // 3-4-5 triangle points in XY plane\n    points = [[0, 0], [60, 0], [0, 80]];\n    \n    // Offset polygon for rounded edges\n    offset_polygon = offset(points, r);\n    \n    // Extrude with rounded top via offset\n    linear_extrude(height = h, convexity = 10)\n        offset_polygon;\n}\n\n// Helper module to create offset polygon with rounded corners\nmodule offset(points, r) {\n    // Create offset polygon by shrinking and expanding\n    offset1 = offset(r = -r, $fn = 16) polygon(points);\n    offset2 = offset(r = r, $fn = 16) offset1;\n    offset2;\n}\n\ntriangle_3_4_5();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "triangle_scalene",
+    "openscad_code": "module triangle_scalene(h = 20, r = 3) {\n    // scalene triangle points (base 80 mm, height 60 mm)\n    points = [\n        [0, 0],    // A\n        [80, 0],   // B\n        [25, 60]   // C\n    ];\n\n    // rounded extrusion using offset + minkowski\n    linear_extrude(height = h)\n        offset(r = r)\n            polygon(points = points);\n}\n\ntriangle_scalene();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "triangle_inscribed",
+    "openscad_code": "// triangle_inscribed.scad\n// Medium-complexity triangle with rounded vertices\n\nmodule triangle_inscribed(r=60, thickness=12, fillet=8) {\n    // equilateral triangle vertices inscribed in circle radius r\n    pts = [\n        [0, r],\n        [r*sin(120), -r*cos(120)],\n        [-r*sin(120), -r*cos(120)]\n    ];\n\n    // rounded corners via offset\n    offset_shape = offset(delta=fillet, $fn=20, $fa=2, $fs=0.5) polygon(pts);\n    \n    // extrude to 3D\n    linear_extrude(height=thickness, center=true)\n        offset_shape;\n}\n\ntriangle_inscribed();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "triangle_rounded",
+    "openscad_code": "// triangle_rounded.scad\n// rounded equilateral triangle prism, 100 mm side, 20 mm thick\n\nmodule triangle_rounded(height = 20, side = 100, r = 8) {\n    h = side * sqrt(3)/2;                 // triangle height\n    corner = [[0, 0], [r, 0], [0, r]];    // quarter-circle template\n    \n    points = [\n        [r, r],                           // bottom-left arc start\n        [side/2, r],                      // bottom edge\n        [side - r, r],                    // bottom-right arc start\n        for(i = [0:10:90]) [              // bottom-right corner arc\n            side - r + r*cos(i),\n            r + r*sin(i)\n        ],\n        [side - r, h - r],                // right edge\n        for(i = [90:10:180]) [            // top corner arc\n            side/2 + r*cos(i),\n            h - r + r*sin(i)\n        ],\n        [r, h - r],                       // left edge\n        for(i = [180:10:270]) [           // bottom-left corner arc\n            r + r*cos(i),\n            r + r*sin(i)\n        ]\n    ];\n    \n    linear_extrude(height = height, center = true)\n        polygon(points = points);\n}\n\ntriangle_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "square",
+    "openscad_code": "// Square with rounded top edges\nmodule rounded_square(size = 80, height = 20, radius = 10) {\n    $fn = 32;\n    \n    // 2D profile of rounded-top square\n    profile = [\n        [-size/2, -size/2],\n        [-size/2, size/2 - radius],\n        [-size/2 + radius, size/2],\n        [size/2 - radius, size/2],\n        [size/2, size/2 - radius],\n        [size/2, -size/2]\n    ];\n    \n    linear_extrude(height = height) {\n        polygon(points = profile);\n    }\n}\n\nrounded_square();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "square_small",
+    "openscad_code": "module square_small(radius=2, size=80) {\n    // rounded square base profile\n    points = [\n        [0, radius],\n        [radius, 0],\n        [size-radius, 0],\n        [size, radius],\n        [size, size-radius],\n        [size-radius, size],\n        [radius, size],\n        [0, size-radius]\n    ];\n    \n    // simple rounded corner arcs\n    arc = [\n        for(i=[0:3]) each\n        let(a=i*90, n=5)\n        [size-radius + radius*cos(a+90/n), radius + radius*sin(a+90/n)],\n        for(i=[1:n-1]) [size-radius + radius*cos(a+90*i/n), radius + radius*sin(a+90*i/n)]\n    ];\n    \n    polygon(concat(points, arc));\n}\n\nlinear_extrude(height=20, center=true)\n    square_small();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "square_large",
+    "openscad_code": "module square_large_rounded() {\n    size = 100;\n    radius = 15;\n    height = 20;\n    \n    points = [\n        [radius, 0],\n        [size - radius, 0],\n        [size, radius],\n        [size, size - radius],\n        [size - radius, size],\n        [radius, size],\n        [0, size - radius],\n        [0, radius]\n    ];\n    \n    paths = [\n        [0, 1, 2, 3, 4, 5, 6, 7]\n    ];\n    \n    difference() {\n        linear_extrude(height = height, center = true)\n            offset(r = radius)\n                polygon(points = paths[0], paths = [paths[0]]);\n        \n        translate([0, 0, -height/2 - 1])\n            cube([size - 2*radius, size - 2*radius, height + 2], center = true);\n    }\n}\n\nsquare_large_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "square_unit",
+    "openscad_code": "// Square with rounded edges\nmodule square_unit(size = 80, radius = 8, height = 12) {\n    // Define 2D rounded square profile\n    corner = [\n        for (a = [0:5:90]) [radius - radius*cos(a), radius - radius*sin(a)]\n    ];\n    \n    profile = [\n        [radius, 0],\n        [size - radius, 0],\n        each [for (p = corner) [size - p[1], p[0]]],\n        [size, size - radius],\n        each [for (p = corner) [size - p[0], size - p[1]]],\n        [radius, size],\n        each [for (p = corner) [p[1], size - p[0]]],\n        [0, radius],\n        each [for (p = corner) [p[0], p[1]]]\n    ];\n    \n    linear_extrude(height = height, center = true)\n        polygon(profile);\n}\n\nsquare_unit();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "square_with_hole",
+    "openscad_code": "module square_with_hole(size = 80, thickness = 12, fillet = 6, hole_d = 30) {\n    // Outer square with rounded corners\n    r = fillet;\n    s = size/2 - r;\n    outer = [\n        [-s, -s-r], [-s-r, -s], [-s-r,  s],\n        [-s,  s+r], [ s,  s+r], [ s+r,  s],\n        [ s+r, -s], [ s, -s-r]\n    ];\n    \n    difference() {\n        linear_extrude(height = thickness)\n            offset(r = r)\n                polygon(points = outer);\n        \n        // Centered cylindrical hole\n        translate([0, 0, -1])\n            cylinder(h = thickness + 2, d = hole_d, $fn = 32);\n    }\n}\n\nsquare_with_hole();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "square_rounded",
+    "openscad_code": "module square_rounded(size = 80, thickness = 10, radius = 8) {\n    // rounded square base\n    w = size / 2 - radius;\n    pts = [\n        [-w, -w],\n        [-w,  w],\n        [ w,  w],\n        [ w, -w]\n    ];\n    offset_pts = [\n        for (p = pts) let(a = atan2(p.y, p.x))\n            [p.x + radius * cos(a), p.y + radius * sin(a)]\n    ];\n    polygon(\n        concat(\n            for (i = [0:3])\n                let(a0 = 90 * i, a1 = 90 * (i + 1))\n                [for (a = [a0:2:a1]) [radius * cos(a), radius * sin(a)] + offset_pts[i]]\n        )\n    );\n}\n\nlinear_extrude(height = 10)\nsquare_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "square_rotated",
+    "openscad_code": "module square_rotated(height = 20, side = 60, chamfer = 4, angle = 45) {\n    // 2D profile: square with 45° rotation and chamfered corners\n    rotate([0, 0, angle])\n        polygon(\n            points = [\n                [-side/2 + chamfer, -side/2],      // bottom-left\n                [ side/2 - chamfer, -side/2],      // bottom-right\n                [ side/2, -side/2 + chamfer],      // bottom-right chamfer\n                [ side/2,  side/2 - chamfer],      // top-right chamfer\n                [ side/2 - chamfer,  side/2],      // top-right\n                [-side/2 + chamfer,  side/2],      // top-left\n                [-side/2,  side/2 - chamfer],      // top-left chamfer\n                [-side/2, -side/2 + chamfer]       // bottom-left chamfer\n            ]\n        );\n\n    // Extrude to 3D\n    linear_extrude(height = height, center = true)\n        rotate([0, 0, angle])\n            polygon(\n                points = [\n                    [-side/2 + chamfer, -side/2],\n                    [ side/2 - chamfer, -side/2],\n                    [ side/2, -side/2 + chamfer],\n                    [ side/2,  side/2 - chamfer],\n                    [ side/2 - chamfer,  side/2],\n                    [-side/2 + chamfer,  side/2],\n                    [-side/2,  side/2 - chamfer],\n                    [-side/2, -side/2 + chamfer]\n                ]\n            );\n}\n\nsquare_rotated();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "square_star_pattern",
+    "openscad_code": "// square_star_pattern.scad\nmodule square_star_pattern(h = 8, r = 50) {\n    // Star with square tips\n    pts = [\n        [0, r],                // top\n        [0.35*r, 0.35*r],      // top-right square corner\n        [r, 0],                // right\n        [0.35*r, -0.35*r],     // bottom-right square corner\n        [0, -r],               // bottom\n        [-0.35*r, -0.35*r],    // bottom-left square corner\n        [-r, 0],               // left\n        [-0.35*r, 0.35*r]      // top-left square corner\n    ];\n    \n    linear_extrude(height = h, center = true)\n        polygon(points = pts);\n}\n\nsquare_star_pattern();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "rectangle",
+    "openscad_code": "// Rounded-edge rectangle plate\nmodule rounded_rectangle(x=100, y=60, r=8, h=5) {\n    // 2D outline with rounded corners\n    polygon(\n        points=[\n            [r,0], [x-r,0],           // bottom edge\n            [x,r], [x,y-r],           // right edge\n            [x-r,y], [r,y],           // top edge\n            [0,y-r], [0,r]            // left edge\n        ],\n        paths=[[\n            0,1,2,3,4,5,6,7           // single closed path\n        ]],\n        convexity=10\n    );\n    linear_extrude(height=h, convexity=10);\n}\n\nrounded_rectangle();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "rectangle_golden",
+    "openscad_code": "// rectangle_golden - golden-ratio rectangle with rounded corners\nmodule rectangle_golden(h = 8) {\n    phi = 1.6180339887;\n    w = 100;\n    d = w / phi;\n    r = 8;\n\n    // rounded-corner rectangle profile\n    points = [\n        [r, 0],\n        [w - r, 0],\n        [w, r],\n        [w, d - r],\n        [w - r, d],\n        [r, d],\n        [0, d - r],\n        [0, r]\n    ];\n    paths = [[0, 1, 2, 3, 4, 5, 6, 7]];\n\n    linear_extrude(height = h)\n        polygon(points = points, paths = paths);\n}\n\nrectangle_golden();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "rectangle_2_1",
+    "openscad_code": "module rectangle_2_1() {\n    w = 100;\n    h = 50;\n    r = 8;\n\n    // Rounded rectangle profile\n    points = [\n        [r, 0],\n        [w-r, 0],\n        [w, r],\n        [w, h-r],\n        [w-r, h],\n        [r, h],\n        [0, h-r],\n        [0, r]\n    ];\n\n    // Arc segments for rounded corners\n    corner = 8;\n    for (a = [0:90/corner:90-90/corner]) {\n        points = concat(points, [[w-r + r*cos(a), r + r*sin(a)]]);\n    }\n    for (a = [90:90/corner:180-90/corner]) {\n        points = concat(points, [[w-r + r*cos(a), h-r + r*sin(a)]]);\n    }\n    for (a = [180:90/corner:270-90/corner]) {\n        points = concat(points, [[r + r*cos(a), h-r + r*sin(a)]]);\n    }\n    for (a = [270:90/corner:360-90/corner]) {\n        points = concat(points, [[r + r*cos(a), r + r*sin(a)]]);\n    }\n\n    // Close polygon\n    points = concat(points, [[r, 0]]);\n\n    linear_extrude(height = 10)\n        polygon(points = points);\n}\n\nrectangle_2_1();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "rectangle_3_1",
+    "openscad_code": "module rectangle_3_1() {\n    // rounded rectangle 80x40 mm with 8 mm corners\n    corner_r = 8;\n    w = 80;\n    h = 40;\n    t = 10;\n    \n    points = [\n        [corner_r, 0],\n        [w - corner_r, 0],\n        [w, corner_r],\n        [w, h - corner_r],\n        [w - corner_r, h],\n        [corner_r, h],\n        [0, h - corner_r],\n        [0, corner_r]\n    ];\n    \n    linear_extrude(height = t)\n        offset(r = corner_r)\n            polygon(points = points);\n}\n\nrectangle_3_1();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "rectangle_4_1",
+    "openscad_code": "module rectangle_4_1() {\n    // rounded rectangle with 4:1 aspect ratio\n    width = 100;\n    height = 25;\n    corner_r = 5;\n    thickness = 10;\n\n    // rounded rectangle profile\n    points = [\n        [corner_r, 0],\n        [width - corner_r, 0],\n        [width, corner_r],\n        [width, height - corner_r],\n        [width - corner_r, height],\n        [corner_r, height],\n        [0, height - corner_r],\n        [0, corner_r]\n    ];\n\n    // rounded rectangle profile with arcs\n    profile = [\n        for (i = [0:7]) points[i],\n        for (a = [0:5:90]) [width - corner_r + corner_r * cos(a), corner_r + corner_r * sin(a)],\n        for (a = [90:5:180]) [width - corner_r + corner_r * cos(a), height - corner_r + corner_r * sin(a)],\n        for (a = [180:5:270]) [corner_r + corner_r * cos(a), height - corner_r + corner_r * sin(a)],\n        for (a = [270:5:360]) [corner_r + corner_r * cos(a), corner_r + corner_r * sin(a)]\n    ];\n\n    linear_extrude(height = thickness)\n        polygon(profile);\n}\n\nrectangle_4_1();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "rectangle_wide",
+    "openscad_code": "// rectangle_wide with rounded edges\nmodule rectangle_wide() {\n    width = 80;\n    height = 40;\n    thickness = 8;\n    radius = 6;\n    \n    points = [\n        [radius, 0],\n        [width - radius, 0],\n        [width, radius],\n        [width, height - radius],\n        [width - radius, height],\n        [radius, height],\n        [0, height - radius],\n        [0, radius]\n    ];\n    \n    paths = [[0, 1, 2, 3, 4, 5, 6, 7]];\n    \n    linear_extrude(height = thickness) {\n        offset(r = radius) offset(r = -radius) polygon(points = points, paths = paths);\n    }\n}\n\nrectangle_wide();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "rectangle_tall",
+    "openscad_code": "module rectangle_tall(w = 40, h = 100, r = 8) {\n    // 2D profile with rounded corners\n    polygon(\n        points = [\n            [r, 0], [w - r, 0], [w, r], [w, h - r],\n            [w - r, h], [r, h], [0, h - r], [0, r]\n        ],\n        paths = [[0, 1, 2, 3, 4, 5, 6, 7]]\n    );\n}\n\n// Extrude to 3D\nlinear_extrude(height = 20)\nrectangle_tall();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "rectangle_rounded",
+    "openscad_code": "module rectangle_rounded(w = 100, h = 70, r = 10, t = 15) {\n    // corner points for rounded rectangle\n    points = [\n        [r, 0],\n        [w - r, 0],\n        [w, r],\n        [w, h - r],\n        [w - r, h],\n        [r, h],\n        [0, h - r],\n        [0, r]\n    ];\n    // rounded corner arcs\n    paths = [\n        [0, 1, 2, 3, 4, 5, 6, 7]\n    ];\n    linear_extrude(height = t)\n        polygon(points, paths);\n}\n\nrectangle_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "rectangle_with_hole",
+    "openscad_code": "module rectangle_with_hole(w = 80, h = 50, t = 8, r = 6, hr = 12) {\n    // outer rounded rectangle points\n    points = [\n        [r, 0], [w - r, 0], [w, r], [w, h - r],\n        [w - r, h], [r, h], [0, h - r], [0, r]\n    ];\n    \n    // outer path\n    outer = concat(\n        [for (i = [0:7]) points[i]],\n        [[r, 0]]\n    );\n    \n    // inner hole path\n    hole = [\n        [w/2 - hr, h/2],\n        [w/2, h/2 - hr],\n        [w/2 + hr, h/2],\n        [w/2, h/2 + hr]\n    ];\n    \n    linear_extrude(height = t)\n    difference() {\n        polygon(points = outer, paths = [range(0, len(outer) - 1)]);\n        polygon(points = hole, paths = [[0, 1, 2, 3]]);\n    }\n}\n\nrectangle_with_hole();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "pentagon",
+    "openscad_code": "module pentagon(r = 50, h = 10, fillet = 3) {\n    // Outer pentagon points\n    a = 360/5;\n    pts = [for(i=[0:4]) [r*cos(i*a-90), r*sin(i*a-90)]];\n    \n    // Filleted inner pentagon (offset inwards)\n    r2 = r - fillet;\n    pts2 = [for(i=[0:4]) [r2*cos(i*a-90), r2*sin(i*a-90)]];\n    \n    // Build shape\n    difference() {\n        linear_extrude(height = h)\n            polygon(pts);\n        \n        // Round top edges\n        translate([0, 0, h - fillet])\n            linear_extrude(height = fillet + 0.01)\n                polygon(pts2);\n        \n        // Round bottom edges\n        translate([0, 0, -0.01])\n            linear_extrude(height = fillet + 0.01)\n                polygon(pts2);\n    }\n}\n\npentagon();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "pentagon_regular",
+    "openscad_code": "module pentagon_regular(height = 20, radius = 50, fillet = 3) {\n    sides = 5;\n    a = 360 / sides;\n    pts = [for(i=[0:sides-1]) \n            [radius * cos(i*a), radius * sin(i*a)]\n          ];\n    \n    // outer shell\n    difference() {\n        linear_extrude(height = height, convexity = 5)\n            offset(r = fillet) \n                polygon(points = pts);\n        \n        // inner shell for rounded edge\n        linear_extrude(height = height + 0.1, convexity = 5)\n            offset(r = fillet - 1.5) \n                polygon(points = pts);\n    }\n}\n\npentagon_regular();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "pentagon_irregular",
+    "openscad_code": "// pentagon_irregular - irregular pentagon prism with rounded top edges\nmodule pentagon_irregular(height=20, radius=60) {\n    // irregular pentagon points\n    pts = [\n        [0, 45],\n        [40, 20],\n        [25, -35],\n        [-25, -35],\n        [-40, 20]\n    ];\n    \n    // extrude the base shape\n    linear_extrude(height=height, $fn=32)\n        polygon(pts);\n    \n    // add rounded top edges\n    translate([0, 0, height])\n        linear_extrude(height=3, $fn=32)\n            offset(r=3)\n                polygon(pts);\n}\n\npentagon_irregular();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "pentagon_star",
+    "openscad_code": "module pentagon_star(height = 10, r_outer = 50, r_inner = 25) {\n    // 5-point star vertices\n    pts = [\n        for (i = [0:9])\n            let (\n                angle = i * 36,\n                r = (i % 2 == 0) ? r_outer : r_inner\n            )\n            [r * cos(angle), r * sin(angle)]\n    ];\n    \n    linear_extrude(height = height)\n        polygon(points = pts);\n}\n\npentagon_star();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "pentagon_star_5_point",
+    "openscad_code": "module pentagon_star_5_point(h = 8, r_out = 50, r_in = 20) {\n    // outer pentagon vertices\n    pts_out = [\n        for(i = [0:4])\n            [r_out * cos( 72*i + 90 ),\n             r_out * sin( 72*i + 90 )]\n    ];\n\n    // inner star points\n    pts_in = [\n        for(i = [0:4])\n            [r_in * cos( 72*i + 90 + 36 ),\n             r_in * sin( 72*i + 90 + 36 )]\n    ];\n\n    // interleave outer and inner points\n    star_pts = [\n        for(i = [0:4]) pts_out[i],\n        for(i = [0:4]) pts_in[i]\n    ];\n\n    // 2D star shape with rounded edges\n    offset(r = 2)\n        polygon(star_pts);\n\n    // extrude to 3D\n    linear_extrude(height = h, center = true)\n        offset(r = 2)\n            polygon(star_pts);\n}\n\npentagon_star_5_point();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "pentagon_rounded",
+    "openscad_code": "module pentagon_rounded(r = 50, h = 20, fillet = 5) {\n    sides = 5;\n    angle_step = 360 / sides;\n    \n    // outer pentagon\n    outer_pts = [for (i = [0:sides-1])\n        r * [cos(i*angle_step), sin(i*angle_step)]\n    ];\n    \n    // inner pentagon offset for rounding\n    inner_pts = [for (i = [0:sides-1])\n        (r - fillet) * [cos(i*angle_step), sin(i*angle_step)]\n    ];\n    \n    // prepare rounded polygon\n    offset(r = fillet) offset(r = -fillet)\n        polygon(outer_pts);\n    \n    // extrude\n    linear_extrude(height = h, center = true)\n        offset(r = fillet) offset(r = -fillet)\n            polygon(outer_pts);\n}\n\npentagon_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "pentagon_hollow",
+    "openscad_code": "module pentagon_hollow(r=35, h=10, wall=4) {\n    outer_pts = [\n        for(a=[0:72:360-72])\n            [r*cos(a), r*sin(a)]\n    ];\n    \n    inner_pts = [\n        for(a=[0:72:360-72])\n            [(r-wall)*cos(a), (r-wall)*sin(a)]\n    ];\n    \n    difference() {\n        linear_extrude(height=h, center=true)\n            polygon(outer_pts);\n            \n        linear_extrude(height=h+0.1, center=true)\n            polygon(inner_pts);\n    }\n}\n\npentagon_hollow();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "hexagon",
+    "openscad_code": "module hexagon_rounded(h = 10, side = 40, r = 3, center = true) {\n    // outer radius for pointy-top orientation\n    or = side;\n    step = 360/6;\n    pts = [for (a = [0:step:359]) or*[cos(a), sin(a)]];\n    \n    linear_extrude(height = h, center = center, convexity = 10)\n        offset(r = r) polygon(pts);\n}\n\nhexagon_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "hexagon_regular",
+    "openscad_code": "module hexagon_regular(r=50, h=10, rounding=2) {\n    sides = 6;\n    angle_step = 360 / sides;\n    \n    // sharp hexagon points\n    pts = [for(i=[0:sides-1]) \n           [r*cos(i*angle_step), r*sin(i*angle_step)]];\n    \n    // offset inwards for rounded edges\n    offset_pts = [for(p=pts) \n                  [p.x-rounding, p.y-rounding]];\n    \n    // 2D rounded hexagon\n    linear_extrude(height=h, center=true, convexity=5)\n        offset(r=rounding) polygon(pts);\n}\n\nhexagon_regular();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "hexagon_long",
+    "openscad_code": "module hexagon_long(r=30, h=80, fillet=3) {\n    sides = 6;\n    angle = 360 / sides;\n\n    // sharp outer points\n    pts = [for(i=[0:sides-1]) r*[cos(i*angle), sin(i*angle)]];\n\n    // rounded profile using offset\n    offset_profile = offset(delta=-fillet, $fn=32) polygon(pts);\n\n    linear_extrude(height=h, center=true)\n        offset_profile;\n}\n\nhexagon_long();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "hexagon_wide",
+    "openscad_code": "module hexagon_wide(radius=40, thickness=8, fillet=3)\n{\n    sides = 6;\n    angle_step = 360 / sides;\n    pts = [for(a=[0:sides-1]) [radius*cos(a*angle_step),\n                               radius*sin(a*angle_step)*0.65]];\n    \n    linear_extrude(height=thickness, convexity=10, $fn=fillet)\n    offset(r=fillet) polygon(pts);\n}\n\nhexagon_wide();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "hexagon_honeycomb",
+    "openscad_code": "module hexagon_honeycomb(h = 10, size = 5, wall = 1.2) {\n    flat = 0.866025; // cos(30°)\n    step = size * 2 * flat;\n    hex_pts = [\n        [size, 0],\n        [size/2, size*flat],\n        [-size/2, size*flat],\n        [-size, 0],\n        [-size/2, -size*flat],\n        [size/2, -size*flat]\n    ];\n    \n    for (dx = [-step, 0, step])\n        for (dy = [-step, 0, step])\n            translate([dx, dy, 0])\n                linear_extrude(height = h, center = true)\n                    difference() {\n                        polygon(points = hex_pts);\n                        polygon(points = [for (p = hex_pts) p * (1 - wall/size)]);\n                    }\n}\n\nhexagon_honeycomb();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "hexagon_rounded",
+    "openscad_code": "module hexagon_rounded(r=30, h=10, fillet=3, $fn=32) {\n    // 2D rounded hexagon profile\n    pts = [\n        for(a=[0:60:359]) \n            let(r_eff = a%120==0 ? r-fillet : r)\n            [r_eff*cos(a), r_eff*sin(a)]\n    ];\n\n    // Create 2D shape\n    polygon(points=pts);\n\n    // Extrude to 3D\n    linear_extrude(height=h, center=true)\n        polygon(points=pts);\n}\n\nhexagon_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "hexagon_with_hole",
+    "openscad_code": "module hexagon_with_hole(\n    outer_radius = 40,\n    inner_radius = 15,\n    height = 10,\n    fillet = 3\n) {\n    // hexagon points\n    hex_pts = [\n        for (i = [0:5])\n            let (a = 60*i)\n            [outer_radius*cos(a), outer_radius*sin(a)]\n    ];\n\n    // inner circle points\n    circle_pts = [\n        for (i = [0:35])\n            let (a = 10*i)\n            [inner_radius*cos(a), inner_radius*sin(a)]\n    ];\n\n    // rounded hexagon profile\n    difference() {\n        offset(r = fillet) polygon(hex_pts);\n        offset(r = fillet) polygon(circle_pts);\n    }\n    linear_extrude(height = height) {\n        difference() {\n            polygon(hex_pts);\n            polygon(circle_pts);\n        }\n    }\n}\n\nhexagon_with_hole();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "heptagon",
+    "openscad_code": "// Heptagonal prism with rounded top edges\nmodule heptagon_primitive(r=45, h=20, fillet=3) {\n    // Generate 7 points for regular heptagon\n    pts = [for(i=[0:6]) [r*cos(i*360/7), r*sin(i*360/7)]];\n    \n    // Main body\n    linear_extrude(height=h-fillet) polygon(pts);\n    \n    // Rounded top edge\n    translate([0,0,h-fillet]) \n        linear_extrude(height=fillet, scale=0.85) polygon(pts);\n}\n\nheptagon_primitive();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "heptagon_regular",
+    "openscad_code": "// Heptagonal prism with rounded top edges\n$fn = 50;\n\nmodule heptagon_prism(r=30, h=20, fillet=3) {\n    // Generate regular heptagon points\n    pts = [for(i=[0:6]) \n        [r*cos(i*360/7), r*sin(i*360/7)]\n    ];\n    \n    difference() {\n        // Main prism\n        linear_extrude(height=h) polygon(points=pts);\n        \n        // Rounded top edges via negative mold\n        translate([0,0,h-fillet])\n            minkowski() {\n                linear_extrude(height=fillet+0.01) \n                    offset(r=-fillet) polygon(points=pts);\n                cylinder(h=0.01, r=fillet);\n            }\n    }\n}\n\nheptagon_prism();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "heptagon_rounded",
+    "openscad_code": "module heptagon_rounded(r=40, h=10, rounding=3, center=false) {\n    sides = 7;\n    angle_step = 360/sides;\n    points = [for(i=[0:sides-1]) r * [cos(i*angle_step), sin(i*angle_step)]];\n    \n    offset(r=rounding) polygon(points);\n    \n    linear_extrude(height=h, center=center) {\n        offset(r=rounding) polygon(points);\n    }\n}\n\nheptagon_rounded(r=40, h=10, rounding=3);",
+    "renders": true
+  },
+  {
+    "primitive_shape": "octagon",
+    "openscad_code": "module octagon_rounded(h = 20, r = 40, corner_r = 5, center = true) {\n    sides = 8;\n    astep = 360 / sides;\n    pts = [for (i = [0 : sides - 1]) \n        [r * cos(i * astep), r * sin(i * astep)]];\n    \n    offset(r = corner_r) {\n        polygon(pts);\n    }\n    \n    linear_extrude(height = h, center = center) {\n        offset(r = corner_r) {\n            polygon(pts);\n        }\n    }\n}\n\noctagon_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "octagon_regular",
+    "openscad_code": "// Regular octagon with rounded top edges\nmodule octagon_regular(height = 20, side = 40, radius = 3) {\n    // 2D octagon points\n    oct_pts = [\n        for(i = [0:7]) [\n            side * cos(i * 45 - 22.5), \n            side * sin(i * 45 - 22.5)\n        ]\n    ];\n    \n    // Rounded top via Minkowski\n    linear_extrude(height - radius)\n        polygon(oct_pts);\n    \n    translate([0, 0, height - radius])\n        minkowski() {\n            polygon(oct_pts);\n            cylinder(h = 0.01, r = radius, $fn = 30);\n        }\n}\n\noctagon_regular();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "octagon_rounded",
+    "openscad_code": "module octagon_rounded(height = 30, radius = 50, r = 8) {\n    sides = 8;\n    da = 360 / sides;\n    pts = [\n        for (i = [0 : sides - 1])\n            let (a = i * da + 22.5)\n            [radius * cos(a), radius * sin(a)]\n    ];\n    offset(r = r) polygon(pts);\n    linear_extrude(height = height) offset(r = r) polygon(pts);\n}\n\noctagon_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "octagon_with_hole",
+    "openscad_code": "module octagon_with_hole(height = 10, outer = 50, inner = 20, rounding = 2) {\n    outer_r = outer / 2;\n    inner_r = inner / 2;\n    \n    // Octagon points\n    oct_pts = [\n        for (i = [0:7]) [\n            outer_r * cos(45 * i + 22.5),\n            outer_r * sin(45 * i + 22.5)\n        ]\n    ];\n    \n    // Create outer octagon with rounded edges\n    difference() {\n        linear_extrude(height = height) {\n            offset(r = rounding) {\n                polygon(points = oct_pts);\n            }\n        }\n        \n        // Central hole\n        translate([0, 0, -1])\n            cylinder(h = height + 2, r = inner_r, $fn = 64);\n    }\n}\n\noctagon_with_hole();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "nonagon",
+    "openscad_code": "module nonagon(radius=50, height=20, edge_radius=3) {\n    sides = 9;\n    angle_step = 360 / sides;\n    \n    // Generate nonagon points\n    points = [for(i=[0:sides-1]) \n        [radius * cos(i*angle_step), radius * sin(i*angle_step)]\n    ];\n    \n    // Create rounded 2D nonagon\n    offset(r=edge_radius) polygon(points);\n    \n    // Extrude to 3D\n    linear_extrude(height=height, center=true) \n        offset(r=edge_radius) polygon(points);\n}\n\nnonagon();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "nonagon_regular",
+    "openscad_code": "module nonagon_regular(h = 20, r = 40, fillet = 2) {\n    sides = 9;\n    angles = [for(i = [0:sides-1]) i*360/sides];\n    pts = [for(a = angles) [r*cos(a), r*sin(a)]];\n    \n    difference() {\n        linear_extrude(height = h, center = true, convexity = 10)\n            offset(r = fillet) polygon(pts);\n        \n        // center hole\n        hole_r = 8;\n        translate([0,0,-h/2-1])\n            cylinder(r = hole_r, h = h+2, $fn = 32);\n    }\n}\n\nnonagon_regular();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "decagon",
+    "openscad_code": "module decagon_prism(r=40, h=20, cr=2) {\n    sides = 10;\n    angle_step = 360/sides;\n    \n    // outer decagon points\n    outer_pts = [for(i=[0:sides-1]) [\n        r*cos(i*angle_step),\n        r*sin(i*angle_step)\n    ]];\n    \n    // inner chamfered decagon points\n    inner_pts = [for(i=[0:sides-1]) [\n        (r-cr)*cos(i*angle_step),\n        (r-cr)*sin(i*angle_step)\n    ]];\n    \n    // build shape with rounded top and bottom edges\n    difference() {\n        linear_extrude(height=h, convexity=10)\n            polygon(outer_pts);\n        \n        translate([0,0,-0.1])\n        linear_extrude(height=h+0.2, convexity=10)\n            polygon(inner_pts);\n    }\n}\n\n// render\ndecagon_prism();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "decagon_regular",
+    "openscad_code": "// Regular decagon prism with rounded top edges\nmodule decagon_regular(h=20, r=50, edge_r=2) {\n    sides = 10;\n    angle = 360 / sides;\n\n    // Generate vertex list for a regular decagon\n    pts = [for (i = [0:sides-1])\n        [r * cos(i*angle), r * sin(i*angle)]\n    ];\n\n    // 2D base shape\n    base_shape = polygon(pts);\n\n    // Extrude with rounded top\n    linear_extrude(height=h, convexity=10) offset(r=edge_r) base_shape;\n}\n\ndecagon_regular();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "decagon_rounded",
+    "openscad_code": "module decagon_rounded(r = 50, h = 20, fillet = 5, center = false) {\n    sides = 10;\n    angle_step = 360 / sides;\n    \n    // outer vertices\n    outer_pts = [for (i = [0:sides-1]) \n        [r * cos(i*angle_step), r * sin(i*angle_step)]];\n    \n    // inner vertices for rounded edges\n    inner_pts = [for (i = [0:sides-1]) \n        [(r - fillet) * cos(i*angle_step + angle_step/2), \n         (r - fillet) * sin(i*angle_step + angle_step/2)]];\n    \n    // build polygon with rounded edges\n    polygon_pts = [];\n    for (i = [0:sides-1]) {\n        next_i = (i + 1) % sides;\n        polygon_pts = concat(polygon_pts, [\n            outer_pts[i],\n            inner_pts[i],\n            outer_pts[next_i]\n        ]);\n    }\n    \n    linear_extrude(height = h, center = center)\n        polygon(polygon_pts);\n}\n\ndecagon_rounded();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "polygon_11_sides",
+    "openscad_code": "// Regular 11-gon prism with rounded top edges\nmodule polygon_11_sides(h = 20, r = 50, rf = 2) {\n    sides = 11;\n    a_step = 360 / sides;\n    pts = [for(i = [0:sides-1]) [r*cos(i*a_step), r*sin(i*a_step)]];\n    \n    difference() {\n        linear_extrude(height = h) polygon(pts);\n        \n        // Rounded top edges via chamfer subtraction\n        translate([0,0,h-rf])\n            linear_extrude(height = rf + 0.1)\n                offset(delta = -rf) polygon(pts);\n    }\n}\n\npolygon_11_sides();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "polygon_12_sides",
+    "openscad_code": "module polygon_12_sides(h = 30, r = 50, fillet = 3)\n{\n    // generate 12 outer vertices\n    outer_pts = [for(i = [0:11]) \n        [r * cos(i * 30), r * sin(i * 30)]];\n\n    // generate 12 inner vertices for fillet\n    inner_pts = [for(i = [0:11]) \n        [(r - fillet) * cos(i * 30 + 15), (r - fillet) * sin(i * 30 + 15)]];\n\n    // interleave outer and inner points for star polygon\n    full_pts = [for(i = [0:23]) \n        (i % 2 == 0) ? outer_pts[i/2] : inner_pts[(i-1)/2]];\n\n    linear_extrude(height = h, center = true, convexity = 10)\n        polygon(points = full_pts);\n}\n\npolygon_12_sides();",
+    "renders": true
+  },
+  {
+    "primitive_shape": "polygon_13_sides",
+    "openscad_code": "module polygon_13_sides(h = 20, r = 50, fillet = 2) {\n    n = 13;\n    pts = [\n        for (i = [0 : n - 1])\n            let (a = 360 / n * i)\n            [r * cos(a), r * sin(a)]\n    ];\n\n    // Main body\n    linear_extrude(height = h) {\n        offset(r = fillet) offset(r = -fillet)\n            polygon(pts);\n    }\n}\n\npolygon_13_sides();",
+    "renders": true
+  }
+]

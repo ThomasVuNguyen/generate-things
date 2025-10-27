@@ -1,0 +1,277 @@
+[
+  {
+    "basic_shape": "cube",
+    "openscad_code": "// Cube with rounded edges (filleted)\n// Overall 100 mm cube with 5 mm edge radius\n\n$fn = 32;\n\nedge_radius = 5;\n\n// Main body\ndifference() {\n    // Outer rounded cube\n    minkowski() {\n        cube([100 - 2*edge_radius, 100 - 2*edge_radius, 100 - 2*edge_radius], center = true);\n        sphere(r = edge_radius);\n    }\n    \n    // Hollow center\n    minkowski() {\n        cube([80 - 2*edge_radius, 80 - 2*edge_radius, 80 - 2*edge_radius], center = true);\n        sphere(r = edge_radius);\n    }\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_small",
+    "openscad_code": "difference() {\n    // Main cube body with rounded edges\n    minkowski() {\n        cube([60, 60, 60], center=true);\n        sphere(r=5);\n    }\n    \n    // Remove internal material to create rounded edges\n    translate([0, 0, 0])\n    minkowski() {\n        cube([50, 50, 50], center=true);\n        sphere(r=5);\n    }\n    \n    // Top face chamfer\n    translate([0, 0, 35])\n    cylinder(h=30, r1=35, r2=40, center=true);\n    \n    // Bottom face chamfer\n    translate([0, 0, -35])\n    cylinder(h=30, r1=40, r2=35, center=true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_medium",
+    "openscad_code": "// Rounded-edge cube with chamfered top edges\nsize = 80;\nradius = 8;\nchamfer = 5;\n\n// Main rounded cube\nminkowski() {\n    cube([size - 2*radius, size - 2*radius, size - 2*radius], center = true);\n    sphere(r = radius, $fn = 32);\n}\n\n// Chamfer top edges\ndifference() {\n    translate([0, 0, size/2 - chamfer]) {\n        rotate([0, 0, 45]) {\n            cube([size*sqrt(2), size*sqrt(2), chamfer*sqrt(2)], center = true);\n        }\n    }\n    \n    translate([0, 0, size/2]) {\n        cube([size + 2, size + 2, chamfer*2], center = true);\n    }\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_large",
+    "openscad_code": "// Medium-complexity cube with rounded edges\n$fn = 32;\n\nmodule rounded_cube(size, radius) {\n    hull() {\n        for (dx = [0, size.x - 2*radius])\n            for (dy = [0, size.y - 2*radius])\n                for (dz = [0, size.z - 2*radius])\n                    translate([dx + radius, dy + radius, dz + radius])\n                        sphere(r = radius);\n    }\n}\n\nrounded_cube([100, 100, 100], 8);",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_tall",
+    "openscad_code": "// Tall cube with rounded vertical edges\n$fn = 32;\n\nwidth = 60;\ndepth = 60;\nheight = 120;\nradius = 8;\n\ndifference() {\n    // Main tall block\n    cube([width, depth, height], center = true);\n    \n    // Cut vertical edge rounds\n    translate([0, 0, 0]) {\n        // Front-left edge\n        rotate([0, 90, 0])\n            translate([0, -depth/2, -height/2])\n                cylinder(h = width, r = radius);\n        \n        // Front-right edge\n        rotate([0, 90, 0])\n            translate([0, -depth/2, height/2])\n                cylinder(h = width, r = radius);\n        \n        // Back-left edge\n        rotate([0, 90, 0])\n            translate([0, depth/2, -height/2])\n                cylinder(h = width, r = radius);\n        \n        // Back-right edge\n        rotate([0, 90, 0])\n            translate([0, depth/2, height/2])\n                cylinder(h = width, r = radius);\n    }\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_wide",
+    "openscad_code": "$fn = 32;\n\n// Cube with rounded edges and slightly wider body\nmodule cube_wide() {\n    width = 120;\n    depth = 80;\n    height = 60;\n    radius = 8;\n    \n    difference() {\n        // Main rounded cube\n        minkowski() {\n            cube([width-2*radius, depth-2*radius, height-2*radius], center = true);\n            sphere(r = radius);\n        }\n        \n        // Optional slight rounding on top edges only\n        translate([0, 0, height/2 - radius])\n            cube([width-2*radius, depth-2*radius, radius*2 + 1], center = true);\n    }\n}\n\ncube_wide();",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_thin",
+    "openscad_code": "// Thin cube with rounded edges\n$fn = 32;\n\nsize = 100;\nthickness = 10;\nradius = 8;\n\ndifference() {\n    // Outer rounded cube\n    minkowski() {\n        cube([size, size, thickness], center = true);\n        sphere(r = radius);\n    }\n    \n    // Inner cavity to thin the walls\n    minkowski() {\n        cube([size - 2*thickness, size - 2*thickness, thickness + 2], center = true);\n        sphere(r = radius - 1);\n    }\n}\n\n// Optional: Small corner fillets\ntranslate([size/2 - radius, size/2 - radius, 0])\n    sphere(r = radius);\n    \ntranslate([-size/2 + radius, size/2 - radius, 0])\n    sphere(r = radius);\n    \ntranslate([size/2 - radius, -size/2 + radius, 0])\n    sphere(r = radius);\n    \ntranslate([-size/2 + radius, -size/2 + radius, 0])\n    sphere(r = radius);",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_hollow",
+    "openscad_code": "// hollow cube with rounded edges and internal ribs\nwall = 2;\nouter = 80;\ninner = outer - 2*wall;\nround = 5;\nrib_w = 2;\nrib_h = 4;\n\ndifference() {\n    // outer rounded cube\n    minkowski() {\n        cube([outer, outer, outer], center = true);\n        sphere(r = round);\n    }\n\n    // hollow center\n    minkowski() {\n        cube([inner, inner, inner], center = true);\n        sphere(r = round - wall);\n    }\n\n    // internal support ribs along X\n    translate([0, 0, 0])\n        difference() {\n            cube([outer - 2*round, rib_w, rib_h], center = true);\n            cube([inner, rib_w + 0.1, rib_h + 0.1], center = true);\n        }\n\n    // internal support ribs along Y\n    translate([0, 0, 0])\n        difference() {\n            cube([rib_w, outer - 2*round, rib_h], center = true);\n            cube([rib_w + 0.1, inner, rib_h + 0.1], center = true);\n        }\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_rounded",
+    "openscad_code": "// cube_rounded - 80 mm cube with 8 mm radius rounded edges\n$fn = 32;\n\nmodule rounded_edge() {\n    cylinder(h=80, r=8);\n}\n\nmodule rounded_corner() {\n    sphere(r=8);\n}\n\ndifference() {\n    cube([80, 80, 80], center=true);\n    \n    // Carve away sharp edges\n    for(x=[-36, 36])\n        for(y=[-36, 36])\n            translate([x, y, 0])\n                rotate([0, 0, 45])\n                    rounded_edge();\n    \n    // Carve away sharp corners\n    for(x=[-36, 36])\n        for(y=[-36, 36])\n            for(z=[-36, 36])\n                translate([x, y, z])\n                    rounded_corner();\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_chamfered",
+    "openscad_code": "// chamfered cube 100 mm on edge with 5 mm 45° chamfers on all edges\n\nch = 5;          // chamfer length\ns  = 100;        // cube size\n\ndifference() {\n    cube([s, s, s], center = true);\n\n    // top edges\n    for (a = [0, 90, 180, 270])\n        rotate([0, 0, a])\n            translate([s/2 - ch, 0, s/2 - ch])\n                rotate([0, 45, 0])\n                    cube([ch*sqrt(2), ch*2, ch*sqrt(2)], center = true);\n\n    // bottom edges\n    for (a = [0, 90, 180, 270])\n        rotate([0, 0, a])\n            translate([s/2 - ch, 0, -s/2 + ch])\n                rotate([0, -45, 0])\n                    cube([ch*sqrt(2), ch*2, ch*sqrt(2)], center = true);\n\n    // vertical edges\n    for (a = [0, 90, 180, 270])\n        rotate([0, 0, a])\n            translate([s/2 - ch, s/2 - ch, 0])\n                rotate([45, 0, 0])\n                    cube([ch*sqrt(2), ch*sqrt(2), ch*2], center = true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_with_hole",
+    "openscad_code": "// Cube with rounded edges and diagonal hole\nsize = 80;\nradius = 8;\nhole_d = 20;\n\ndifference() {\n    // Main rounded cube\n    minkowski() {\n        cube([size - 2*radius, size - 2*radius, size - 2*radius], center = true);\n        sphere(r = radius);\n    }\n    \n    // Diagonal hole\n    rotate([45, 45, 0])\n        cylinder(h = size * 1.5, d = hole_d, center = true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_thick_walls",
+    "openscad_code": "// cube_thick_walls.scad\nwall = 5;\nouter = 100;\ninner = outer - 2*wall;\n\ndifference() {\n    // outer cube with rounded edges\n    minkowski() {\n        cube([outer, outer, outer], center = true);\n        sphere(r = 3, $fn = 16);\n    }\n\n    // hollow center\n    translate([0, 0, -wall/2])\n        cube([inner, inner, outer + 1], center = true);\n\n    // bottom opening\n    translate([0, 0, -outer/2])\n        cube([inner + 2*wall, inner + 2*wall, wall + 1], center = true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_minus_corner",
+    "openscad_code": "// Cube with one corner removed and rounded edges\nsize = 80;\nradius = 8;\n\ndifference() {\n    // Main rounded cube\n    minkowski() {\n        cube([size - 2*radius, size - 2*radius, size - 2*radius], center = true);\n        sphere(r = radius);\n    }\n    \n    // Corner removal\n    translate([size/2, size/2, size/2])\n        rotate([0, 0, 45])\n            cube([size * 1.5, size * 1.5, size * 1.5], center = true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_minus_edge",
+    "openscad_code": "// cube_minus_edge: 100mm cube with one edge removed and rounded remaining edges\nedge_len = 100;\nradius = 5;\n\ndifference() {\n    // main rounded cube\n    minkowski() {\n        cube([edge_len - 2*radius, edge_len - 2*radius, edge_len - 2*radius], center = true);\n        sphere(r = radius);\n    }\n    \n    // remove one full edge along x axis at top front\n    translate([0, edge_len/2 - radius, edge_len/2 - radius])\n        cube([edge_len + 2*radius, edge_len, edge_len], center = false);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cube_with_slots",
+    "openscad_code": "// Cube with slots on top and bottom faces\n$fn = 32;\n\n// Main cube with rounded edges\ndifference() {\n    // Rounded cube\n    minkowski() {\n        cube([80, 80, 80], center = true);\n        sphere(r = 5);\n    }\n    \n    // Top slots\n    translate([0, 0, 40])\n        cube([60, 10, 10], center = true);\n    translate([0, 0, 40])\n        cube([10, 60, 10], center = true);\n        \n    // Bottom slots\n    translate([0, 0, -40])\n        cube([60, 10, 10], center = true);\n    translate([0, 0, -40])\n        cube([10, 60, 10], center = true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere",
+    "openscad_code": "// Medium-complexity sphere with rounded equatorial groove\n// Overall Ø 100 mm\n\nmodule grooved_sphere(r=50, groove_r=3, groove_depth=2) {\n    difference() {\n        sphere(r=r, $fn=100);               // main sphere\n        rotate([0,90,0])                    // rotate groove to equator\n            difference() {\n                cylinder(h=r*2.2, r=r+1, center=true, $fn=100);  // cutting band\n                cylinder(h=r*2.3, r=r-groove_depth, center=true, $fn=100);\n            }\n    }\n}\n\ngrooved_sphere();",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_small",
+    "openscad_code": "// Small sphere with rounded edges via minkowski\n$fn = 32;\n\nminkowski() {\n    sphere(r = 20);\n    sphere(r = 3);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_medium",
+    "openscad_code": "// sphere_medium - sphere with rounded edges via minkowski\n$fn = 64;\n\nradius = 50;\n\n// core sphere\nsphere(r = radius);\n\n// add rounded edge effect\nminkowski() {\n    sphere(r = radius - 5);\n    sphere(r = 5);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_large",
+    "openscad_code": "// Sphere with rounded edge cutout\n$fn = 48;\n\ndifference() {\n    sphere(r = 60);\n    \n    // Remove 45-degree slice to show medium complexity\n    rotate([0, 45, 0])\n        cube([120, 120, 120], center = true);\n    \n    // Add a 30-degree wedge cutout\n    rotate([0, -30, 0])\n        cube([120, 120, 120], center = true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_hollow",
+    "openscad_code": "// Hollow sphere with rounded edge on inner surface\nouter_r = 50;\nwall = 5;\ninner_r = outer_r - wall;\n\ndifference() {\n    sphere(r = outer_r);\n    \n    // Inner hollow sphere\n    sphere(r = inner_r);\n    \n    // Add a rounded fillet on the inner edge of the wall\n    translate([0, 0, -inner_r])\n        rotate_extrude(angle = 360)\n            translate([inner_r - wall/2, 0, 0])\n                circle(r = wall/2);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_thick",
+    "openscad_code": "// Thick-walled hollow sphere\n$fn = 48;\n\nouter_r = 50;\nwall_thickness = 5;\ninner_r = outer_r - wall_thickness;\n\ndifference() {\n    sphere(r = outer_r);\n    sphere(r = inner_r);\n}\n\n// Optional: Add a small alignment notch\nrotate([90, 0, 0])\n    cylinder(h = wall_thickness * 2, r = wall_thickness, center = true);",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_flat_bottom",
+    "openscad_code": "// Sphere with flat bottom and rounded edge\n$fn = 64;\n\nsphere_radius = 50;\nflat_height = 25;\nedge_radius = 5;\n\ndifference() {\n    sphere(sphere_radius);\n    \n    // Cut off bottom\n    translate([0, 0, -sphere_radius])\n        cube([sphere_radius*2.1, sphere_radius*2.1, sphere_radius - flat_height], center=true);\n}\n\n// Add rounded bottom edge\ntranslate([0, 0, flat_height])\n    difference() {\n        cylinder(h=edge_radius, r=sqrt(pow(sphere_radius, 2) - pow(flat_height, 2)) + edge_radius, center=true);\n        \n        translate([0, 0, edge_radius/2])\n            sphere(sphere_radius);\n        \n        translate([0, 0, -edge_radius/2 - 1])\n            cube([sphere_radius*2.1, sphere_radius*2.1, edge_radius + 2], center=true);\n    }",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_flat_top",
+    "openscad_code": "// sphere_flat_top: sphere with top sliced flat and rounded edge\nsphere_r = 50;          // original sphere radius\nflat_offset = 20;       // how much to slice off top\nedge_r = 5;             // radius for rounded edge\n\ndifference() {\n    sphere(r = sphere_r);\n    // cut off top\n    translate([0, 0, sphere_r - flat_offset])\n        cube([sphere_r*2, sphere_r*2, flat_offset + 1], center = true);\n}\n\n// add rounded edge ring\ntranslate([0, 0, sphere_r - flat_offset])\n    rotate_extrude(angle = 360)\n        translate([sphere_r - edge_r, 0, 0])\n            circle(r = edge_r);",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_sliced_half",
+    "openscad_code": "// sphere sliced in half with rounded edge\n$fn = 36;\nradius = 50;\n\ndifference() {\n    sphere(r = radius);\n    translate([0, -radius - 1, 0])\n        cube([2 * radius + 2, 2 * radius + 2, 2 * radius + 2], center = true);\n}\n\ntranslate([0, 0, -radius * 0.3])\n    difference() {\n        cylinder(h = radius * 0.3, r1 = radius, r2 = radius * 0.9, $fn = 36);\n        cylinder(h = radius * 0.3 + 0.1, r1 = radius * 0.8, r2 = radius * 0.7, $fn = 36);\n    }",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_sliced_quarter",
+    "openscad_code": "// sphere_sliced_quarter - medium complexity\nr = 40;\n$fn = 48;\n\n// full sphere\nfull = sphere(r);\n\n// slice along X, Y, and Z axes to keep only the positive octant\ndifference() {\n    sphere(r);\n    \n    // remove negative X\n    translate([-r-1, 0, 0])\n        cube([r+1, 2*r+2, 2*r+2], center=true);\n    \n    // remove negative Y\n    translate([0, -r-1, 0])\n        cube([2*r+2, r+1, 2*r+2], center=true);\n    \n    // remove negative Z\n    translate([0, 0, -r-1])\n        cube([2*r+2, 2*r+2, r+1], center=true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_elongated",
+    "openscad_code": "// Elongated capsule (sphere stretched to cylinder)\n// Medium: combines sphere and cylinder with rounded ends\n\nlength = 100;\ndiameter = 50;\nradius = diameter / 2;\n\nmodule capsule(len, dia) {\n    $fn = 32;\n    difference() {\n        union() {\n            // Central cylinder\n            cylinder(h = len - dia, r = dia/2, center = true);\n            \n            // End spheres\n            translate([0, 0, (len - dia)/2])\n                sphere(r = dia/2);\n            \n            translate([0, 0, -(len - dia)/2])\n                sphere(r = dia/2);\n        }\n        \n        // Optional: remove slight overlap if desired\n        cube([dia, dia, len + 2], center = true);\n    }\n}\n\ncapsule(length, diameter);",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_squashed",
+    "openscad_code": "// Squashed sphere (ellipsoid) with rounded equator edge\n// Scaled sphere + torus belt for smoother transition\n\n$fn = 64;\n\n// Main squashed body\nscale([1, 1, 0.6])\n    sphere(r = 50);\n\n// Rounded equator ring\ndifference() {\n    scale([1, 1, 0.6])\n        sphere(r = 52);\n    scale([1, 1, 0.6])\n        sphere(r = 48);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_oblong",
+    "openscad_code": "// sphere_oblong: stretched sphere with rounded ends\nmodule sphere_oblong(length=100, radius=25){\n    // main body cylinder\n    cylinder(h=length-2*radius, r=radius, center=true);\n    \n    // end cap spheres\n    translate([0,0,(length/2)-radius]) sphere(r=radius);\n    translate([0,0,-(length/2)+radius]) sphere(r=radius);\n}\n\nsphere_oblong(100, 30);",
+    "renders": true
+  },
+  {
+    "basic_shape": "sphere_with_opening",
+    "openscad_code": "sphere_radius = 50;\nwall_thickness = 4;\nopening_diameter = 30;\n\ndifference() {\n    sphere(r = sphere_radius);\n\n    // Top opening\n    cylinder(h = sphere_radius * 2, r = opening_diameter / 2, center = true);\n\n    // Optional bottom opening for symmetry\n    rotate([180, 0, 0])\n        cylinder(h = sphere_radius * 2, r = opening_diameter / 2, center = true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder",
+    "openscad_code": "// Cylinder with rounded top and bottom edges\nh = 80;\nr = 25;\nfillet = 4;\n\ndifference() {\n    // Main cylinder plus edge spheres\n    union() {\n        cylinder(h = h, r = r, center = true);\n        translate([0, 0,  h/2]) sphere(r = fillet);\n        translate([0, 0, -h/2]) sphere(r = fillet);\n    }\n    \n    // Cut away excess sphere material\n    translate([0, 0,  h/2 + fillet]) cube([r*2+1, r*2+1, fillet*2], center = true);\n    translate([0, 0, -h/2 - fillet]) cube([r*2+1, r*2+1, fillet*2], center = true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_short",
+    "openscad_code": "// Short cylinder with rounded top and bottom edges\n$fn = 50;                      // Smooth curves\n\nh = 60;                        // Total height\nr = 30;                        // Main radius\nedge = 5;                      // Rounding radius\n\n// Main cylinder body minus top/bottom caps to create rounding\ndifference() {\n    cylinder(h = h, r = r);\n    \n    // Remove top sharp edge\n    translate([0, 0, h - edge])\n        cylinder(h = edge + 1, r1 = r, r2 = r - edge);\n    \n    // Remove bottom sharp edge\n    translate([0, 0, -1])\n        cylinder(h = edge + 1, r1 = r - edge, r2 = r);\n}\n\n// Add rounded top cap\ntranslate([0, 0, h - edge])\n    sphere(r = edge);\n\n// Add rounded bottom cap\ntranslate([0, 0, edge])\n    sphere(r = edge);",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_tall",
+    "openscad_code": "// Tall cylinder with rounded top and bottom edges\nmodule cylinder_tall() {\n    height = 100;\n    radius = 30;\n    fillet = 5;\n    \n    difference() {\n        // Main cylinder\n        cylinder(h=height, r=radius, $fn=64);\n        \n        // Top edge rounding\n        translate([0, 0, height - fillet])\n            cylinder(h=fillet, r1=radius, r2=radius - fillet, $fn=64);\n        \n        // Bottom edge rounding\n        translate([0, 0, fillet])\n            cylinder(h=fillet, r1=radius - fillet, r2=radius, $fn=64);\n    }\n    \n    // Top rounded cap\n    translate([0, 0, height - fillet])\n        sphere(r=fillet, $fn=64);\n    \n    // Bottom rounded base\n    translate([0, 0, fillet])\n        sphere(r=fillet, $fn=64);\n}\n\ncylinder_tall();",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_thin",
+    "openscad_code": "// Thin cylinder with rounded top and bottom edges\n$fn = 64;\n\nmodule cylinder_thin(height = 80, radius = 25, thickness = 3, fillet = 2) {\n    difference() {\n        // Outer cylinder\n        cylinder(h = height, r = radius);\n        \n        // Inner hollow\n        translate([0, 0, -1])\n            cylinder(h = height + 2, r = radius - thickness);\n        \n        // Top fillet removal\n        translate([0, 0, height - fillet])\n            rotate_extrude(angle = 90)\n                translate([radius - thickness, 0, 0])\n                    circle(r = fillet);\n        \n        // Bottom fillet removal\n        translate([0, 0, fillet])\n            rotate_extrude(angle = 90)\n                translate([radius - thickness, 0, 0])\n                    circle(r = fillet);\n    }\n    \n    // Add fillet material\n    union() {\n        // Top fillet\n        translate([0, 0, height - fillet])\n            rotate_extrude(angle = 90)\n                translate([radius - thickness - fillet, 0, 0])\n                    circle(r = fillet);\n        \n        // Bottom fillet\n        translate([0, 0, fillet])\n            rotate_extrude(angle = 270)\n                translate([radius - thickness - fillet, 0, 0])\n                    circle(r = fillet);\n    }\n}\n\ncylinder_thin();",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_thick",
+    "openscad_code": "// Cylinder with rounded edges and thickened base\nheight = 80;\nradius = 30;\nbase_thickness = 15;\nedge_radius = 5;\n\ndifference() {\n    // Main cylinder with rounded edges\n    union() {\n        // Cylinder body\n        cylinder(h=height, r=radius, $fn=64);\n        \n        // Rounded top edge\n        translate([0, 0, height])\n            minkowski() {\n                cylinder(h=0.1, r=radius-edge_radius, $fn=64);\n                sphere(r=edge_radius, $fn=32);\n            }\n        \n        // Thickened base\n        cylinder(h=base_thickness, r=radius+10, $fn=64);\n    }\n    \n    // Hollow center\n    cylinder(h=height+base_thickness, r=radius-5, $fn=64);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_hollow",
+    "openscad_code": "// Hollow cylinder with rounded top and bottom edges\n// Outer radius 30mm, inner radius 20mm, height 80mm\n// 2mm radius fillets on top and bottom edges\n\nouter_r = 30;\ninner_r = 20;\nheight = 80;\nfillet_r = 2;\n\ndifference() {\n    // Outer cylinder with rounded edges\n    union() {\n        // Main outer cylinder\n        cylinder(h=height - 2*fillet_r, r=outer_r, center=true);\n        \n        // Top rounded edge\n        translate([0, 0, height/2 - fillet_r])\n            cylinder(h=2*fillet_r, r1=outer_r, r2=outer_r - fillet_r, center=true);\n        \n        // Bottom rounded edge\n        translate([0, 0, -height/2 + fillet_r])\n            cylinder(h=2*fillet_r, r1=outer_r - fillet_r, r2=outer_r, center=true);\n    }\n    \n    // Inner hollow cylinder\n    cylinder(h=height + 2, r=inner_r, center=true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_thick_walls",
+    "openscad_code": "// Thick-walled cylinder with rounded top/bottom edges\n// Outer radius 40mm, wall thickness 8mm, height 60mm\n\n// Outer rounded cylinder\ndifference() {\n    cylinder(h=60, r=40, $fn=100);\n    \n    // Top roundover (negative sphere)\n    translate([0, 0, 55])\n        sphere(r=5, $fn=100);\n    \n    // Bottom roundover (negative sphere)  \n    translate([0, 0, 5])\n        sphere(r=5, $fn=100);\n}\n\n// Inner hollow cylinder\ntranslate([0, 0, 5])\n    cylinder(h=50, r=32, $fn=100);\n\n// Top closing ring with rounded inner edge\ndifference() {\n    cylinder(h=5, r=40, $fn=100);\n    \n    // Inner hole\n    cylinder(h=6, r=37, $fn=100);\n    \n    // Inner top roundover\n    translate([0, 0, -1])\n        sphere(r=5, $fn=100);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_with_bottom",
+    "openscad_code": "// cylinder_with_bottom.scad\n\n$fn = 32;           // smooth curves\n\nh = 80;             // overall height\nr = 40;             // radius\nwall = 3;           // wall / bottom thickness\nr_fillet = 4;       // inside bottom fillet radius\n\ndifference() {\n    // outer shell\n    cylinder(h = h, r = r);\n\n    // hollow out\n    translate([0, 0, wall])\n        cylinder(h = h - wall + 0.01, r = r - wall);\n\n    // inside fillet at bottom edge\n    translate([0, 0, wall])\n        rotate_extrude(angle = 90)\n            translate([r - wall, 0])\n                circle(r = r_fillet);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_with_top",
+    "openscad_code": "// cylinder with rounded top edge\nh = 80;\nr = 30;\nedge_r = 5;\n\ndifference() {\n    union() {\n        // main cylinder body\n        cylinder(h = h, r = r, $fn = 64);\n        \n        // rounded top edge\n        translate([0, 0, h])\n            cylinder(h = edge_r, r1 = r, r2 = r + edge_r, $fn = 64);\n    }\n    \n    // remove inner material to create rounded edge\n    translate([0, 0, h - edge_r * 0.5])\n        cylinder(h = edge_r * 2, r = r - edge_r * 0.5, $fn = 64);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_rounded_ends",
+    "openscad_code": "// Rounded-end cylinder (capsule)\n// 100mm long, 50mm diameter, 10mm radius rounded ends\n\nlength = 100;\ndiameter = 50;\nradius = diameter / 2;\n\n// Central cylinder body\ncylinder(h=length - 2*radius, r=radius, center=true);\n\n// Rounded ends\ntranslate([0, 0, (length - 2*radius)/2]) sphere(r=radius);\ntranslate([0, 0, -(length - 2*radius)/2]) sphere(r=radius);",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_flat_ends",
+    "openscad_code": "// Cylinder with flat ends and rounded top/bottom edges\n$fn = 50;\n\ndiameter = 60;\nheight = 80;\nedge_radius = 4;\n\ndifference() {\n    cylinder(h = height, r = diameter/2);\n    \n    // Rounded top edge\n    translate([0, 0, height - edge_radius])\n    rotate_extrude(angle = 90)\n    translate([diameter/2 - edge_radius, 0])\n    circle(r = edge_radius);\n    \n    // Rounded bottom edge\n    mirror([0, 0, 1])\n    translate([0, 0, height - edge_radius])\n    rotate_extrude(angle = 90)\n    translate([diameter/2 - edge_radius, 0])\n    circle(r = edge_radius);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_diameter_large",
+    "openscad_code": "// Medium-complexity cylinder with rounded top and bottom edges\ncylinder_diameter_large = 80;   // diameter 80 mm\ncylinder_height      = 60;      // height 60 mm\nedge_radius          = 8;       // 8 mm radius rounding\n\n// Main body minus sharp edges\ndifference() {\n    cylinder(h = cylinder_height, d = cylinder_diameter_large, $fn = 64);\n    \n    // Top edge chamfer\n    translate([0, 0, cylinder_height - edge_radius])\n        cylinder(h = edge_radius + 1, \n                 r1 = cylinder_diameter_large/2 - edge_radius, \n                 r2 = cylinder_diameter_large/2 + 1, \n                 $fn = 64);\n    \n    // Bottom edge chamfer\n    translate([0, 0, -1])\n        cylinder(h = edge_radius + 1, \n                 r1 = cylinder_diameter_large/2 + 1, \n                 r2 = cylinder_diameter_large/2 - edge_radius, \n                 $fn = 64);\n}\n\n// Add rounded edge rings\ntranslate([0, 0, cylinder_height - edge_radius])\n    cylinder(h = edge_radius, \n             r = cylinder_diameter_large/2 - edge_radius, \n             $fn = 64);\n\ntranslate([0, 0, edge_radius])\n    cylinder(h = edge_radius, \n             r = cylinder_diameter_large/2 - edge_radius, \n             $fn = 64);",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_diameter_small",
+    "openscad_code": "// Small cylinder with medium complexity - rounded edges and slight taper\n$fn = 32;\n\ndiameter = 50;\nheight = 80;\ntop_diameter = 45;\nfillet_radius = 3;\n\ndifference() {\n    // Main tapered cylinder with rounded edges\n    cylinder(h=height, r1=diameter/2, r2=top_diameter/2, center=false);\n    \n    // Bottom edge fillet\n    translate([0, 0, -0.1])\n        cylinder(h=fillet_radius + 0.2, r1=diameter/2 - fillet_radius, r2=diameter/2, center=false);\n    \n    // Top edge fillet\n    translate([0, 0, height - fillet_radius])\n        cylinder(h=fillet_radius + 0.2, r1=top_diameter/2, r2=top_diameter/2 - fillet_radius, center=false);\n}\n\n// Internal hollow cylinder\ntranslate([0, 0, fillet_radius])\n    cylinder(h=height - 2 * fillet_radius, r=top_diameter/4, center=false);",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_hollow_thin",
+    "openscad_code": "// cylinder_hollow_thin - medium complexity hollow cylinder with rounded edges\n$fn = 64;\n\nouter_r = 50;\nwall = 2;\nheight = 100;\nround = 4;\n\n// Outer shell\ndifference() {\n    // Main tube with rounded top\n    union() {\n        cylinder(h = height - round, r = outer_r);\n        translate([0, 0, height - round])\n            cylinder(h = round, r1 = outer_r, r2 = outer_r);\n    }\n    \n    // Hollow interior\n    cylinder(h = height + 1, r = outer_r - wall);\n    \n    // Rounded bottom edge\n    translate([0, 0, -1])\n        cylinder(h = round + 1, r1 = outer_r - wall, r2 = outer_r - wall);\n}\n\n// Optional base ring for stability\ntranslate([0, 0, -2])\n    cylinder(h = 2, r = outer_r + 2);\n\n// Optional top lip\ntranslate([0, 0, height])\n    cylinder(h = 3, r = outer_r + 1);",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_with_flange",
+    "openscad_code": "// cylinder with flange, rounded edges\n$fa = 1;\n$fs = 1;\n\n// overall height\nh = 80;\n\n// main cylinder\nr_body = 25;\n\n// flange\nflange_h = 12;\nflange_r = 45;\n\n// rounding\nr_fillet = 3;\n\nunion() {\n    // main body\n    cylinder(h = h - 2*r_fillet, r = r_body, center = true);\n\n    // top fillet\n    translate([0,0,h/2 - r_fillet])\n        rotate_extrude(angle = 90, convexity = 10)\n            translate([r_body - r_fillet, 0])\n                circle(r = r_fillet);\n\n    // bottom fillet\n    translate([0,0,-h/2 + r_fillet])\n        rotate_extrude(angle = 90, convexity = 10)\n            translate([r_body - r_fillet, 0])\n                circle(r = r_fillet);\n\n    // flange\n    translate([0,0,-h/2 - flange_h/2])\n        cylinder(h = flange_h, r = flange_r, center = true);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cylinder_tapped",
+    "openscad_code": "// cylinder_tapped.scad\n// height 80 mm, radius 30 mm, M5 threaded hole centered on top\n\nmodule cylinder_tapped(h=80, r=30, thread_d=5, thread_depth=12) {\n    difference() {\n        // main body with rounded top edge\n        union() {\n            cylinder(h=h-2, r=r, $fn=60);                // main shaft\n            translate([0,0,h-2])\n                cylinder(h=2, r1=r, r2=r-2, $fn=60);    // chamfered top\n        }\n        \n        // central tap hole\n        translate([0,0,h-thread_depth])\n            cylinder(h=thread_depth+1, d=thread_d*0.85, $fn=32);\n        \n        // small vent hole from side\n        translate([0,0,5])\n            rotate([90,0,0])\n                cylinder(h=r+2, d=2, $fn=16);\n    }\n}\n\ncylinder_tapped();",
+    "renders": true
+  },
+  {
+    "basic_shape": "cone",
+    "openscad_code": "// Rounded-base cone (medium complexity)\nr_base = 50;\nheight = 100;\nround_rad = 5;\n\ndifference() {\n    union() {\n        // Main cone body\n        cylinder(h = height, r1 = r_base, r2 = 0, $fn = 60);\n        \n        // Rounded base ring\n        translate([0, 0, -round_rad])\n            cylinder(h = round_rad, r1 = r_base, r2 = r_base, $fn = 60);\n    }\n    \n    // Cut underside rounding\n    translate([0, 0, -round_rad])\n        cylinder(h = round_rad + 1, r1 = r_base - round_rad, r2 = r_base, $fn = 60);\n}\n\n// Optional small tip truncation\ntranslate([0, 0, height - 2])\n    cylinder(h = 4, r1 = 2, r2 = 0, $fn = 20);",
+    "renders": true
+  },
+  {
+    "basic_shape": "cone_short",
+    "openscad_code": "// cone_short with rounded base edge\nmodule cone_short(h = 40, r = 60, fillet = 3) {\n    difference() {\n        cylinder(h = h, r1 = r, r2 = 0, $fn = 64);\n        translate([0, 0, h - fillet])\n            cylinder(h = fillet + 0.01, r1 = r - fillet, r2 = 0, $fn = 64);\n    }\n    translate([0, 0, -0.01])\n        cylinder(h = fillet, r1 = r, r2 = r - fillet, $fn = 64);\n}\n\ncone_short();",
+    "renders": true
+  },
+  {
+    "basic_shape": "cone_tall",
+    "openscad_code": "// Tall cone with rounded tip\nh = 100;\nr_base = 25;\nr_tip = 1.5;\n\ndifference() {\n    // Main cone body\n    cylinder(h = h, r1 = r_base, r2 = 0, $fn = 64);\n    \n    // Slight rounding at base\n    translate([0, 0, -0.1])\n        cylinder(h = 2, r1 = r_base + 0.1, r2 = r_base - 1.5, $fn = 64);\n}\n\n// Rounded tip via tiny sphere\ntranslate([0, 0, h])\n    sphere(r_tip, $fn = 32);",
+    "renders": true
+  },
+  {
+    "basic_shape": "cone_wide_base",
+    "openscad_code": "// Cone with rounded base edge\n$fn = 32;\n\nbase_r = 50;\ntop_r = 0;\nh = 100;\nround_r = 5;\n\n// Main cone\ndifference() {\n    cylinder(h=h, r1=base_r, r2=top_r);\n    \n    // Remove bottom sharp edge\n    translate([0, 0, -0.1])\n        cylinder(h=round_r*2+0.2, r1=base_r-round_r, r2=base_r-round_r);\n}\n\n// Add rounded base ring\ntranslate([0, 0, -round_r]) {\n    rotate_extrude(angle=90) {\n        translate([base_r-round_r, round_r, 0])\n            circle(r=round_r);\n    }\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cone_narrow_base",
+    "openscad_code": "module cone_narrow_base() {\n    // Main cone body\n    cylinder(h=80, r1=35, r2=5, $fn=64);\n    \n    // Rounded base edge\n    translate([0, 0, 0])\n    rotate([90, 0, 0])\n    cylinder(h=5, r1=5, r2=0, $fn=32);\n    \n    // Reinforced base rim\n    difference() {\n        cylinder(h=3, r1=37, r2=37, $fn=64);\n        cylinder(h=3, r1=34, r2=34, $fn=64);\n    }\n    \n    // Subtle top rounding\n    translate([0, 0, 80])\n    sphere(r=5.5, $fn=32);\n}\n\ncone_narrow_base();",
+    "renders": true
+  },
+  {
+    "basic_shape": "cone_truncated",
+    "openscad_code": "// Truncated cone with rounded top edge\nr1 = 40;       // bottom radius\nr2 = 20;       // top radius\nh = 60;        // height\nr = 5;         // rounding radius\n\ndifference() {\n    cylinder(h=h, r1=r1, r2=r2, $fn=64);            // main cone\n    \n    // round top edge\n    translate([0, 0, h - r])\n    rotate_extrude(angle=360, $fn=64)\n    difference() {\n        square([r2, r]);\n        translate([r2 - r, r])\n        circle(r=r, $fn=32);\n    }\n    \n    // round bottom edge\n    translate([0, 0, -r])\n    rotate_extrude(angle=360, $fn=64)\n    difference() {\n        square([r1, r]);\n        translate([r1 - r, 0])\n        circle(r=r, $fn=32);\n    }\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cone_hollow",
+    "openscad_code": "// Hollow cone with rounded base edge\n$fn = 32;\n\nheight = 80;\nouter_r = 40;\nwall = 3;\nround_r = 2;\n\ndifference() {\n    // Outer cone\n    cylinder(h = height, r1 = outer_r, r2 = 0);\n    \n    // Inner cone\n    translate([0, 0, wall])\n        cylinder(h = height - wall, r1 = outer_r - wall, r2 = 0);\n    \n    // Remove base edge rounding\n    translate([0, 0, -0.1])\n        cylinder(h = round_r + 0.2, r1 = outer_r + 0.1, r2 = outer_r - round_r);\n}\n\n// Add rounded base edge\ntranslate([0, 0, -round_r])\n    difference() {\n        cylinder(h = round_r, r1 = outer_r, r2 = outer_r - round_r);\n        cylinder(h = round_r + 0.2, r1 = outer_r - wall, r2 = outer_r - wall - round_r);\n    }",
+    "renders": true
+  },
+  {
+    "basic_shape": "cone_surface",
+    "openscad_code": "// Medium-complexity cone with fillet at the base and a thin wall\nfillet_r = 5;\nwall = 2;\n\ndifference() {\n    // Main solid cone\n    cylinder(h = 100, r1 = 40, r2 = 0, $fn = 64);\n\n    // Hollow inside\n    translate([0, 0, wall])\n        cylinder(h = 100 - wall, r1 = 40 - wall, r2 = 0, $fn = 64);\n\n    // Fillet at base\n    translate([0, 0, -0.01])\n        cylinder(h = fillet_r * 2, r1 = 40 + 0.5, r2 = 40 - wall - 0.5, $fn = 64);\n}\n\n// Flattened tip to avoid needle\ntranslate([0, 0, 100 - 1])\n    cylinder(h = 2, r = 2, $fn = 16);",
+    "renders": true
+  },
+  {
+    "basic_shape": "cone_with_base",
+    "openscad_code": "// Cone with rounded base edge\n$fn = 50;\n\n// Main cone body\ncylinder(h = 80, r1 = 40, r2 = 0, center = false);\n\n// Rounded base edge using torus segment\ntranslate([0, 0, 0.1])\nrotate_extrude(angle = 360, $fn = 100)\ntranslate([40, 0, 0])\ncircle(r = 3);\n\n// Base plate\ndifference() {\n    cylinder(h = 5, r = 40 + 3, center = false);\n    cylinder(h = 6, r = 40, center = false);\n}",
+    "renders": true
+  },
+  {
+    "basic_shape": "cone_thick_walls",
+    "openscad_code": "$fn = 32;\n\n// Parameters\nh = 100;          // cone height\nr1 = 50;          // bottom outer radius\nr2 = 0;           // top outer radius (point)\nwall = 5;         // wall thickness\n\n// Outer cone\ndifference() {\n    cylinder(h = h, r1 = r1, r2 = r2, center = false);\n    \n    // Inner hollow cone\n    translate([0, 0, wall])\n        cylinder(h = h - wall, r1 = r1 - wall, r2 = r2, center = false);\n}\n\n// Flatten bottom\ndifference() {\n    cylinder(h = wall, r1 = r1, r2 = r1, center = false);\n    cylinder(h = wall + 0.1, r1 = r1 - wall, r2 = r1 - wall, center = false);\n}",
+    "renders": true
+  }
+]
