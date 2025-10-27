@@ -1883,5 +1883,270 @@
     "basic_shape": "anchor_square",
     "openscad_code": "// anchor_square - square base with rounded edges and central hole\n$fn = 32;\n\nsquare_size = 80;\nthickness = 12;\nedge_radius = 8;\nhole_d = 10;\n\ndifference() {\n    // rounded square base\n    linear_extrude(height = thickness, center = true)\n        offset(r = edge_radius)\n            offset(r = -edge_radius)\n                square(square_size, center = true);\n    \n    // central hole\n    cylinder(h = thickness + 2, r = hole_d/2, center = true);\n}",
     "renders": false
+  },
+  {
+    "basic_shape": "anchor_large",
+    "openscad_code": "$fn = 32;\n\nmodule anchor_large() {\n    // Main shank\n    cylinder(h = 80, r = 12);\n    \n    // Anchor stock (cross bar on top)\n    translate([0, 0, 80])\n        rotate([90, 0, 0])\n        cylinder(h = 60, r = 8);\n    \n    // Two flukes (arms)\n    translate([0, 0, 0])\n        rotate([0, 20, 45])\n        cylinder(h = 50, r1 = 20, r2 = 5);\n    \n    translate([0, 0, 0])\n        rotate([0, 20, -45])\n        cylinder(h = 50, r1 = 20, r2 = 5);\n    \n    // Rounded crown (base)\n    translate([0, 0, -15])\n        sphere(r = 20);\n}\n\nanchor_large();",
+    "renders": false
+  },
+  {
+    "basic_shape": "anchor_small",
+    "openscad_code": "// anchor_small - simple fluked anchor shape\n$fn = 36;\n\n// main shank\ncylinder(h = 90, r = 8);\n\n// flukes\ntranslate([0, 0, 80])\n    rotate([0, 90, 0])\n    difference() {\n        cube([40, 20, 8], center = true);\n        translate([0, 0, -1])\n            cube([36, 16, 10], center = true);\n    }\n\n// stock perpendicular to flukes\ntranslate([0, 0, 50])\n    rotate([90, 0, 0])\n    cylinder(h = 60, r = 5);\n\n// ring\ntranslate([0, 0, 90])\n    rotate([90, 0, 0])\n    rotate_extrude()\n        translate([15, 0])\n            circle(r = 5);",
+    "renders": false
+  },
+  {
+    "basic_shape": "anchor_hollow",
+    "openscad_code": "// Anchor hollow - medium complexity\n$fn = 32;\n\nmodule anchor_hollow() {\n    difference() {\n        // Outer rounded anchor body\n        hull() {\n            translate([0, -20, 0]) sphere(r=15);\n            translate([0, 20, 0]) sphere(r=15);\n        }\n        \n        // Top ring\n        rotate_extrude(angle=360, $fn=64)\n            translate([30, 0, 0]) circle(r=8);\n        \n        // Hollow center\n        translate([0, 0, -5]) cylinder(h=50, r1=12, r2=8);\n        \n        // Bottom hollow\n        translate([0, 0, -20]) cylinder(h=20, r=10);\n    }\n}\n\nanchor_hollow();",
+    "renders": false
+  },
+  {
+    "basic_shape": "anchor_solid",
+    "openscad_code": "// Anchor with rounded shank and flukes\n$fn = 32;\n\n// Main shank\nunion() {\n    translate([0, 0, 10])\n        cylinder(h=80, r=8);\n\n    // Rounded top\n    translate([0, 0, 90])\n        sphere(r=8);\n\n    // Flukes\n    rotate([0, 0, 45])\n        translate([0, 0, 25])\n            difference() {\n                cube([50, 5, 40], center=true);\n                translate([0, 0, 20])\n                    rotate([0, 45, 0])\n                        cube([60, 10, 30], center=true);\n            }\n\n    rotate([0, 0, -45])\n        translate([0, 0, 25])\n            difference() {\n                cube([50, 5, 40], center=true);\n                translate([0, 0, 20])\n                    rotate([0, -45, 0])\n                        cube([60, 10, 30], center=true);\n            }\n\n    // Ring hole\n    translate([0, 0, 85])\n        rotate([90, 0, 0])\n            cylinder(h=20, r1=5, r2=5);\n    translate([0, 10, 85])\n        rotate([90, 0, 0])\n            cylinder(h=20, r1=3, r2=3);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss",
+    "openscad_code": "// Boss with rounded top and mounting hole\nheight = 60;\nbase_d = 80;\ntop_d = 60;\nhole_d = 20;\nfillet_r = 5;\n\ndifference() {\n    // Main boss shape\n    union() {\n        // Cylindrical base\n        cylinder(h = height * 0.7, r = base_d/2, $fn = 64);\n        \n        // Rounded top\n        translate([0, 0, height * 0.7])\n            cylinder(h = height * 0.3, r1 = base_d/2, r2 = top_d/2, $fn = 64);\n    }\n    \n    // Mounting hole\n    translate([0, 0, -1])\n        cylinder(h = height + 2, r = hole_d/2, $fn = 32);\n    \n    // Edge fillets\n    translate([0, 0, height * 0.7])\n        cylinder(h = height * 0.3 + 2, r = top_d/2 + 1, $fn = 64);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_round",
+    "openscad_code": "// boss_round – medium complexity\n// 20 mm Ø base, 8 mm Ø post, 25 mm total height, all edges rounded\n\nmodule boss_round() {\n    // Base cylinder with rounded top edge\n    cylinder(h=5, r=10, $fn=64);\n    \n    // Rounded top fillet\n    translate([0,0,5])\n        cylinder(h=3, r1=10, r2=8, $fn=64);\n    \n    // Post cylinder\n    translate([0,0,8])\n        cylinder(h=17, r=4, $fn=64);\n    \n    // Rounded post top\n    translate([0,0,25])\n        sphere(r=4, $fn=64);\n}\n\nboss_round();",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_square",
+    "openscad_code": "// boss_square.scad\n// Medium-complexity square boss with rounded top edges and central clearance hole\n\n// Overall dimensions\nboss_w = 60;\nboss_l = 60;\nboss_h = 30;\nfillet_r = 5;\nhole_d = 20;\n\n// Main block with rounded top edges\ndifference() {\n    union() {\n        // Main body\n        cube([boss_w, boss_l, boss_h - fillet_r], center = true);\n        \n        // Rounded top fillets\n        for (x = [-boss_w/2 + fillet_r, boss_w/2 - fillet_r])\n            for (y = [-boss_l/2 + fillet_r, boss_l/2 - fillet_r])\n                translate([x, y, boss_h/2 - fillet_r])\n                    cylinder(r = fillet_r, h = fillet_r, center = true);\n        \n        // Edge cylinders for rounded top perimeter\n        translate([0, 0, boss_h/2 - fillet_r]) {\n            // X edges\n            for (x = [-boss_w/2 + fillet_r, boss_w/2 - fillet_r])\n                translate([x, 0, 0])\n                    cylinder(r = fillet_r, h = boss_l - 2*fillet_r, center = true);\n            // Y edges\n            for (y = [-boss_l/2 + fillet_r, boss_l/2 - fillet_r])\n                translate([0, y, 0])\n                    rotate([0, 90, 0])\n                        cylinder(r = fillet_r, h = boss_w - 2*fillet_r, center = true);\n        }\n    }\n    \n    // Central through hole\n    rotate([0, 0, 0])\n        cylinder(d = hole_d, h = boss_h + 2, center = true);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_large",
+    "openscad_code": "// boss_large - raised circular platform with rounded top and mounting holes\nmodule boss_large() {\n    // Main platform with rounded top\n    linear_extrude(height=20, convexity=10)\n    offset(r=5)\n    offset(r=-5)\n    circle(d=80);\n    \n    // Cylindrical base\n    cylinder(h=5, d=90, $fn=100);\n    \n    // Four mounting holes\n    for(i = [0:3]) {\n        rotate([0, 0, i*90])\n        translate([30, 0, -1])\n        cylinder(h=22, d=8, $fn=32);\n    }\n}\n\nboss_large();",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_small",
+    "openscad_code": "// boss_small - medium complexity\n// Small cylindrical boss with rounded top and base fillet\n\n$fn = 32;\n\n// Main boss body with rounded top\nunion() {\n    // Cylindrical base\n    cylinder(h = 8, r = 15, center = false);\n    \n    // Rounded top\n    translate([0, 0, 8])\n        sphere(r = 15);\n}\n\n// Central hole\ndifference() {\n    // Base cylinder\n    cylinder(h = 8, r = 15, center = false);\n    \n    // Hole through center\n    translate([0, 0, -1])\n        cylinder(h = 10, r = 5, center = false);\n    \n    // Counterbore at top\n    translate([0, 0, 8])\n        cylinder(h = 2, r = 8, center = false);\n}\n\n// Base fillet\ndifference() {\n    // Outer fillet\n    cylinder(h = 3, r = 18, center = false);\n    \n    // Inner cut to create fillet\n    translate([0, 0, 3])\n        cylinder(h = 3, r = 15, center = false);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_tall",
+    "openscad_code": "// Tall boss with rounded top and base fillet\n\nh = 80;           // total height\nr = 30;           // radius\nf = 3;            // fillet radius\n\nunion() {\n    // main cylinder\n    cylinder(h=h-f, r=r, center=false);\n\n    // rounded top\n    translate([0,0,h-f])\n        sphere(r=r);\n\n    // base fillet\n    difference() {\n        cylinder(h=f, r=r, center=false);\n        translate([0,0,-f])\n            cylinder(h=f*2, r=r-f, center=false);\n    }\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_short",
+    "openscad_code": "// boss_short.scad\n// Short cylindrical boss with rounded top and filleted base\n\n// Main cylinder body\ncylinder(h=30, r=35, $fn=50);\n\n// Rounded top dome\ntranslate([0, 0, 30])\n    sphere(r=35, $fn=50);\n\n// Fillet at base (remove sharp edge)\ndifference() {\n    cylinder(h=5, r1=40, r2=35, $fn=50);\n    translate([0, 0, -0.1])\n        cylinder(h=5.2, r=34.9, $fn=50);\n}\n\n// Center hole\ntranslate([0, 0, -1])\n    cylinder(h=37, r=15, $fn=50);",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_tapered",
+    "openscad_code": "module boss_tapered(h=40, r_base=25, r_top=15, fillet=3){\n    difference(){\n        cylinder(h=h, r1=r_base, r2=r_top, $fn=32);\n\n        // Top edge fillet\n        translate([0,0,h-fillet])\n            cylinder(h=fillet+0.1, r1=r_top-fillet, r2=r_top+0.1, $fn=32);\n\n        // Bottom edge fillet\n        translate([0,0,-0.1])\n            cylinder(h=fillet+0.1, r1=r_base+0.1, r2=r_base-fillet, $fn=32);\n    }\n\n    // Center hole\n    cylinder(h=h+0.2, r=6, center=true, $fn=32);\n}\n\nboss_tapered();",
+    "renders": false
+  },
+  {
+    "basic_shape": "recess",
+    "openscad_code": "difference() {\n    // Main block with rounded top edges\n    translate([0, 0, -2])\n        minkowski() {\n            cube([80, 60, 20], center=true);\n            cylinder(h=0.1, r=4, $fn=16);\n        }\n\n    // Recess cavity with rounded bottom\n    translate([0, 0, 5])\n        hull() {\n            cylinder(h=15, r1=30, r2=25, $fn=32);\n            translate([0, 0, -0.1])\n                cylinder(h=0.1, r=25, $fn=32);\n        }\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "recess_round",
+    "openscad_code": "// Recess with rounded edges – medium complexity primitive\n$fn = 32;\n\nmodule recess_round(d=80, h=20, wall=4, rad=5) {\n    inner_d = d - 2*wall;\n    difference() {\n        // outer cylinder with rounded top edge\n        minkowski() {\n            cylinder(h=h-rad, d=d, center=false);\n            sphere(r=rad);\n        }\n        // inner recess\n        translate([0, 0, -1])  // slight overcut\n            cylinder(h=h+2, d=inner_d, center=false);\n    }\n}\n\nrecess_round();",
+    "renders": false
+  },
+  {
+    "basic_shape": "recess_square",
+    "openscad_code": "// Recessed square with rounded edges and center hole\nmodule recess_square(size=80, depth=10, radius=8, hole_d=20) {\n    difference() {\n        // Main square with rounded edges - outer frame\n        minkowski() {\n            cube([size, size, depth], center=true);\n            cylinder(h=0.1, r=radius, center=true);\n        }\n        \n        // Center recess\n        translate([0, 0, -depth/2 + 0.1])\n            cube([size - 2*radius - 4, size - 2*radius - 4, depth], center=true);\n        \n        // Center hole through bottom\n        translate([0, 0, -depth/2 - 1])\n            cylinder(h=depth + 2, d=hole_d, center=true);\n    }\n}\n\nrecess_square();",
+    "renders": false
+  },
+  {
+    "basic_shape": "recess_large",
+    "openscad_code": "// Recess_large - medium complexity rounded rectangular recess\ndifference() {\n    // Outer block\n    cube([120, 80, 40], center=true);\n    \n    // Main recess with rounded edges\n    translate([0, 0, -5])\n    minkowski() {\n        cube([100, 60, 20], center=true);\n        sphere(r=5);\n    }\n}\n\n// Bottom fillet for recess\ntranslate([0, 0, -20])\ndifference() {\n    cube([100, 60, 2], center=true);\n    translate([0, 0, -1])\n    minkowski() {\n        cube([95, 55, 2], center=true);\n        sphere(r=3);\n    }\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "recess_small",
+    "openscad_code": "// Recess_small - medium complexity with rounded edges\ndifference() {\n    // Outer block with rounded edges\n    minkowski() {\n        cube([60, 40, 20], center=true);\n        sphere(r=3);\n    }\n    \n    // Inner recess\n    translate([0, 0, 5])\n    minkowski() {\n        cube([50, 30, 15], center=true);\n        sphere(r=2);\n    }\n    \n    // Bottom access hole\n    translate([0, 0, -12])\n    cylinder(h=10, r=5, $fn=32);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "recess_deep",
+    "openscad_code": "difference() {\n    // Main recess block with rounded edges\n    minkowski() {\n        cube([80, 80, 40], center=true);\n        sphere(r=5);\n    }\n    \n    // Cut out the recess cavity\n    minkowski() {\n        cube([60, 60, 41], center=true);\n        sphere(r=3);\n    }\n    \n    // Add rounded bottom to the recess\n    translate([0, 0, -15])\n        cylinder(h=25, r1=30, r2=25, center=true, $fn=60);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "recess_shallow",
+    "openscad_code": "// Shallow rectangular recess with rounded inner edges\ndifference() {\n    // Outer block\n    cube([80, 60, 10], center = true);\n    \n    // Inner recess with rounded edges\n    translate([0, 0, -0.5])\n    minkowski() {\n        cube([60, 40, 10], center = true);\n        sphere(r = 5);\n    }\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "rib",
+    "openscad_code": "$fn = 32;\n\ndifference() {\n    // Main rib block with rounded top\n    hull() {\n        translate([0, 0, 0])\n            cylinder(h=8, r=3);\n        translate([0, 0, 80])\n            cylinder(h=8, r=6);\n    }\n\n    // Central hollow channel\n    translate([0, 0, -1])\n        cylinder(h=82, r=2.5);\n        \n    // Mounting holes\n    translate([0, 0, 10])\n        cylinder(h=10, r=1.5);\n    translate([0, 0, 70])\n        cylinder(h=10, r=1.5);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "rib_long",
+    "openscad_code": "// rib_long - medium complexity\n// long rectangular bar with rounded ends\n\nlength = 120;\nwidth = 20;\nheight = 10;\ncorner_radius = height/2;\n\ndifference() {\n    union() {\n        // main body\n        cube([length - 2*corner_radius, width, height], center = true);\n        // rounded ends\n        translate([(length - corner_radius)/2, 0, 0])\n            rotate([0, 90, 0])\n                cylinder(h = width, r = corner_radius, center = true);\n        translate([-(length - corner_radius)/2, 0, 0])\n            rotate([0, 90, 0])\n                cylinder(h = width, r = corner_radius, center = true);\n    }\n    // center groove\n    cube([length + 2, 4, height + 2], center = true);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "rib_short",
+    "openscad_code": "// rib_short - short rib with rounded edges and slight taper\n$fn = 32;\n\n// Main body with rounded top and bottom edges\ndifference() {\n    // Tapered rounded body\n    hull() {\n        translate([0, 0, 5])\n            cylinder(h=2, r1=28, r2=30);\n        translate([0, 0, 28])\n            cylinder(h=2, r1=22, r2=24);\n    }\n    \n    // Hollow center\n    translate([0, 0, 0])\n        cylinder(h=35, r1=18, r2=20);\n}\n\n// Flat bottom base\ntranslate([0, 0, 0])\n    cylinder(h=5, r1=30, r2=30);\n\n// Rounded top cap\ntranslate([0, 0, 30])\n    sphere(r=24);",
+    "renders": false
+  },
+  {
+    "basic_shape": "rib_thick",
+    "openscad_code": "// Ribbed thick plate (60 x 100 x 20 mm) with rounded edges and 5 ribs\nmodule rib_thick() {\n    plate = 60;\n    length = 100;\n    height = 20;\n    radius = 5;\n\n    // Main plate with rounded edges\n    difference() {\n        minkowski() {\n            cube([plate, length, height - radius]);\n            sphere(r = radius);\n        }\n\n        // Hollow out interior to create shell\n        translate([radius, radius, radius])\n            minkowski() {\n                cube([plate - 2*radius, length - 2*radius, height - 2*radius]);\n                sphere(r = 1);\n            }\n    }\n\n    // Add 5 vertical ribs\n    for (i = [1:4:20]) {\n        translate([i + 6, 0, 0])\n            minkowski() {\n                cube([6, length, height - radius]);\n                sphere(r = 2);\n            }\n    }\n}\n\nrib_thick();",
+    "renders": false
+  },
+  {
+    "basic_shape": "rib_thin",
+    "openscad_code": "// rib_thin - thin curved rib with rounded edges\nmodule rib_thin() {\n    // Main thin curved plate\n    linear_extrude(height=4, center=true, twist=15)\n        offset(r=2)\n            difference() {\n                square([100, 30], center=true);\n                translate([0, 10, 0])\n                    square([90, 10], center=true);\n            }\n    \n    // Rounded top edge\n    translate([0, 15, 2])\n        rotate([90, 0, 0])\n            cylinder(h=100, r=2, center=true);\n    \n    // Rounded bottom edge\n    translate([0, -15, -2])\n        rotate([90, 0, 0])\n            cylinder(h=100, r=2, center=true);\n}\n\nrib_thin();",
+    "renders": false
+  },
+  {
+    "basic_shape": "rib_tall",
+    "openscad_code": "// rib_tall - medium complexity\nmodule rib_tall(l=100, w=20, h=80, r=5) {\n    // main body\n    difference() {\n        union() {\n            // central slab\n            cube([l, w, h], center=true);\n            // rounded top cap\n            translate([0, 0, h/2 - r])\n                cylinder(h=r*2, r1=w/2, r2=w/2, center=true);\n        }\n        // round top edge\n        translate([0, 0, h/2 + r])\n            cube([l+1, w+1, r*2], center=true);\n    }\n}\n\nrib_tall();",
+    "renders": false
+  },
+  {
+    "basic_shape": "rib_short",
+    "openscad_code": "// Rib short - basic geometric primitive\n// Medium complexity with rounded edges\n\n$fn = 32;\n\nmodule rib_short() {\n    // Main body with rounded edges\n    hull() {\n        translate([0, 0, 5]) cube([80, 30, 10], center = true);\n        translate([0, 0, -5]) cube([80, 30, 10], center = true);\n    }\n    \n    // Tapered ends\n    difference() {\n        hull() {\n            translate([-35, 0, 0]) sphere(r = 15);\n            translate([35, 0, 0]) sphere(r = 15);\n            cube([70, 26, 10], center = true);\n        }\n        \n        // Hollow center\n        cube([60, 22, 12], center = true);\n    }\n}\n\nrib_short();",
+    "renders": false
+  },
+  {
+    "basic_shape": "rib_tapered",
+    "openscad_code": "// Rib tapered bar with rounded edges\nmodule rib_tapered() {\n    width = 100;\n    height = 20;\n    top_thick = 5;\n    base_thick = 12;\n    length = 80;\n    fillet = 2;\n    \n    // Tapered rib profile\n    difference() {\n        hull() {\n            translate([0, -base_thick/2, 0])\n                cube([length, base_thick, height], center=true);\n            translate([0, -top_thick/2, height/2])\n                cube([length, top_thick, height/2], center=true);\n        }\n        \n        // Corner rounding cuts\n        for(x = [-length/2 + fillet, length/2 - fillet])\n        for(z = [-height/2 + fillet, height/2 - fillet])\n            translate([x, 0, z])\n                sphere(r=fillet, $fn=16);\n    }\n}\n\nrib_tapered();",
+    "renders": false
+  },
+  {
+    "basic_shape": "flange",
+    "openscad_code": "difference() {\n    // Main disc\n    cylinder(h = 12, r = 40, $fn = 48);\n\n    // Central hole\n    translate([0, 0, -1])\n        cylinder(h = 14, r = 20, $fn = 48);\n\n    // Mounting holes\n    for (a = [0:60:359])\n        rotate([0, 0, a])\n            translate([30, 0, -1])\n                cylinder(h = 14, r = 4, $fn = 16);\n\n    // Rounded top edge\n    translate([0, 0, 12])\n        cylinder(h = 2, r1 = 40, r2 = 38, $fn = 48);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "flange_round",
+    "openscad_code": "$fn = 32;\n\nd = 80;            // flange diameter\nt = 10;            // thickness\nhole_d = 8;        // bolt hole diameter\nbolt_circle = 60;  // bolt circle diameter\nn = 4;             // number of bolt holes\n\ndifference() {\n    // main disc\n    cylinder(h = t, r = d/2, center = true);\n\n    // rounded top edge\n    difference() {\n        translate([0, 0, t/2])\n            cylinder(h = t/2, r1 = d/2, r2 = d/2 - 2);\n        translate([0, 0, t/2 - 0.01])\n            cylinder(h = t/2 + 0.02, r = d/2 - 2, center = true);\n    }\n\n    // bolt holes\n    for(i = [0 : n-1])\n        rotate([0, 0, i * 360/n])\n            translate([bolt_circle/2, 0, 0])\n                cylinder(h = t + 1, r = hole_d/2, center = true);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "flange_square",
+    "openscad_code": "// Flange_square – 100 mm square plate, 10 mm thick, centered bolt pattern\nmodule flange_square(size=100, thick=10, hole_d=8, corner_r=5) {\n    difference() {\n        // Plate with rounded corners\n        linear_extrude(height=thick)\n            offset(r=corner_r)\n                offset(r=-corner_r)\n                    square(size, center=true);\n\n        // Four bolt holes on 70 mm PCD\n        for (a=[0:90:270])\n            rotate(a)\n                translate([70/2, 0, -1])\n                    cylinder(h=thick+2, d=hole_d, $fn=20);\n    }\n}\n\nflange_square();",
+    "renders": false
+  },
+  {
+    "basic_shape": "flange_large",
+    "openscad_code": "// flange_large.scad\n$fn = 50;\n\n// Main disk\ndifference() {\n    cylinder(h=12, d=120);\n\n    // Center hole\n    cylinder(h=14, d=40);\n\n    // Bolt holes on PCD\n    for (a = [0:60:359])\n        rotate([0, 0, a])\n            translate([40, 0, -1])\n                cylinder(h=14, d=8);\n}\n\n// Rounded top edge\ndifference() {\n    translate([0, 0, 12])\n        cylinder(h=4, d=120);\n    translate([0, 0, 11.9])\n        cylinder(h=6, d=116);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "flange_small",
+    "openscad_code": "// Flange_small – medium complexity\n// Outer ring with rounded top edge, central bore, 4 bolt holes\n\nouter_d = 80;\ninner_d = 20;\nheight = 10;\nbolt_d = 6;\nbolt_circle = 50;\nedge_r = 2;\n\ndifference() {\n    union() {\n        // main disk\n        cylinder(h = height, r = outer_d/2, $fn = 60);\n        // rounded top edge\n        translate([0, 0, height - edge_r])\n            cylinder(h = edge_r, r1 = outer_d/2, r2 = outer_d/2 - edge_r, $fn = 60);\n    }\n    // central bore\n    translate([0, 0, -1])\n        cylinder(h = height + 2, r = inner_d/2, $fn = 60);\n    // bolt holes\n    for(a = [0:90:359])\n        rotate([0, 0, a])\n            translate([bolt_circle/2, 0, -1])\n                cylinder(h = height + 2, r = bolt_d/2, $fn = 20);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "flange_thick",
+    "openscad_code": "// Flange with rounded edges and bolt holes\n$fn = 50;\n\nmodule flange_thick() {\n    difference() {\n        // Main flange body with rounded edges\n        minkowski() {\n            cylinder(h=10, r=40, center=true);\n            sphere(r=2);\n        }\n        \n        // Central hole\n        cylinder(h=12, r=15, center=true);\n        \n        // Bolt holes\n        for(i=[0:3]) {\n            rotate([0, 0, 90*i])\n                translate([25, 0, 0])\n                    cylinder(h=12, r=3.5, center=true);\n        }\n    }\n}\n\nflange_thick();",
+    "renders": false
+  },
+  {
+    "basic_shape": "flange_thin",
+    "openscad_code": "// flange_thin.scad\n$fn = 36;\n\n// main disk\ndifference() {\n    // outer rounded disk\n    union() {\n        cylinder(h=6, r=50);\n        cylinder(h=3, r=50);\n    }\n    // central hole\n    cylinder(h=7, r=12);\n    // bolt holes\n    for (a = [0:60:300])\n        rotate([0,0,a])\n            translate([35,0,0])\n                cylinder(h=7, r=4);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "flange_with_holes",
+    "openscad_code": "// flange_with_holes - medium complexity\nd = 80;              // flange diameter\nt = 10;              // thickness\nhd = 8;              // hole diameter\nn = 4;               // number of holes\nr = 30;              // hole circle radius\n\n// main disc with rounded edges\ndifference() {\n    cylinder(h = t, r = d/2, $fn = 64);\n    translate([0, 0, -0.1])\n        cylinder(h = t + 0.2, r = d/2 - 3, $fn = 64);\n}\n\n// bolt holes\nfor (i = [0 : n-1]) {\n    rotate([0, 0, i * 360/n])\n        translate([r, 0, -1])\n            cylinder(h = t + 2, r = hd/2, $fn = 32);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "collar",
+    "openscad_code": "// Basic collar with rounded edges\n$fn = 32;\n\ndifference() {\n    // Outer rounded ring\n    minkowski() {\n        cylinder(h=10, r=45);\n        sphere(r=3);\n    }\n    \n    // Inner hole\n    minkowski() {\n        cylinder(h=12, r=35);\n        sphere(r=2);\n    }\n    \n    // Bottom slice for flat base\n    translate([0, 0, -1])\n        cube([200, 200, 2], center=true);\n}\n\n// Top chamfer\ndifference() {\n    translate([0, 0, 10])\n        cylinder(h=3, r1=48, r2=45);\n    translate([0, 0, 9])\n        cylinder(h=5, r=35);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "collar_tall",
+    "openscad_code": "// collar_tall\n$fn = 32;\n\nh = 80;\nr_out = 35;\nr_in = 25;\nedge_r = 3;\n\ndifference() {\n    cylinder(h = h, r = r_out, center = true);\n    cylinder(h = h + 1, r = r_in, center = true);\n}\n\ntranslate([0, 0, -h/2 + edge_r])\n    cylinder(h = edge_r * 2, r1 = r_out - edge_r, r2 = r_out, center = true);\n\ntranslate([0, 0,  h/2 - edge_r])\n    cylinder(h = edge_r * 2, r1 = r_out, r2 = r_out - edge_r, center = true);",
+    "renders": false
+  },
+  {
+    "basic_shape": "collar_short",
+    "openscad_code": "// collar_short - medium complexity\ndifference() {\n    // main collar ring with rounded edges\n    minkowski() {\n        difference() {\n            cylinder(h=15, r=40, $fn=60);\n            cylinder(h=18, r=32, $fn=60);\n        }\n        sphere(r=2, $fn=20);\n    }\n    \n    // small keying notch\n    translate([0, -40, 7.5])\n        rotate([90, 0, 0])\n            cylinder(h=10, r=3, $fn=20);\n    \n    // two alignment holes\n    translate([25, 0, 7.5])\n        rotate([90, 0, 0])\n            cylinder(h=30, r=2, $fn=20);\n    \n    translate([-25, 0, 7.5])\n        rotate([90, 0, 0])\n            cylinder(h=30, r=2, $fn=20);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "collar_thick",
+    "openscad_code": "// Collar thick - medium complexity with rounded edges\ndifference() {\n    // Outer rounded collar\n    minkowski() {\n        cylinder(h=40, r=60);\n        sphere(r=5);\n    }\n    \n    // Inner hole\n    minkowski() {\n        cylinder(h=50, r=30);\n        sphere(r=5);\n    }\n    \n    // Top bevel\n    translate([0, 0, 35])\n        cylinder(h=10, r1=65, r2=55);\n    \n    // Bottom bevel\n    translate([0, 0, -5])\n        cylinder(h=10, r1=55, r2=65);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "collar_thin",
+    "openscad_code": "// Collar_thin - thin ring with rounded top and bottom edges\n$fn=50;\nouter_r = 30;\ninner_r = 25;\nheight = 8;\nround_r = 2;\n\ndifference() {\n    union() {\n        cylinder(h=height-2*round_r, r=outer_r-round_r);\n        translate([0,0,0]) cylinder(h=round_r, r1=outer_r-round_r, r2=outer_r);\n        translate([0,0,height-round_r]) cylinder(h=round_r, r1=outer_r, r2=outer_r-round_r);\n    }\n    cylinder(h=height+1, r=inner_r, center=true);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "collar_conical",
+    "openscad_code": "// Conical collar with rounded edges and slight taper\n$fn = 32;\n\n// Main parameters\nbase_d = 80;\ntop_d = 60;\nheight = 30;\nedge_r = 3;\nwall_t = 4;\n\n// Outer cone\ndifference() {\n    cylinder(h = height, r1 = base_d/2, r2 = top_d/2, center = true);\n    translate([0, 0, -edge_r])\n        cylinder(h = height + 2*edge_r, r1 = (base_d/2)-wall_t, r2 = (top_d/2)-wall_t, center = true);\n}\n\n// Top rounded edge\ntranslate([0, 0, height/2])\n    rotate_extrude(angle = 360, convexity = 10)\n        translate([(top_d/2)-wall_t-edge_r, 0, 0])\n            circle(r = edge_r);\n\n// Bottom rounded edge\ntranslate([0, 0, -height/2])\n    rotate_extrude(angle = 360, convexity = 10)\n        translate([(base_d/2)-wall_t-edge_r, 0, 0])\n            circle(r = edge_r);",
+    "renders": false
+  },
+  {
+    "basic_shape": "collar_cylindrical",
+    "openscad_code": "$fn = 50;\n\ndifference() {\n    // Main collar body with rounded top edge\n    union() {\n        cylinder(h = 30, r = 35, center = true);               // Base cylinder\n        translate([0, 0, 15])\n            cylinder(h = 5, r1 = 35, r2 = 30, center = true);  // Chamfered top\n    }\n    \n    // Center hole\n    cylinder(h = 32, r = 25, center = true);\n    \n    // Side slot\n    translate([0, -50, 0])\n        cube([50, 100, 32], center = true);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_cylindrical",
+    "openscad_code": "// boss_cylindrical - medium complexity\n// basic cylinder with rounded top and mounting hole\n\n$fn = 50;\n\n// main body\nunion() {\n    // cylindrical base\n    cylinder(h = 30, r = 30);\n    \n    // rounded top\n    translate([0, 0, 30])\n        cylinder(h = 10, r1 = 30, r2 = 25);\n    \n    // top dome\n    translate([0, 0, 40])\n        sphere(r = 25);\n}\n\n// central hole\ntranslate([0, 0, -1])\n    cylinder(h = 52, r = 12.5);",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_conical",
+    "openscad_code": "// boss_conical.scad\n// Medium complexity boss with rounded edge and counterbore\n\nmodule boss_conical(h = 20, r_base = 20, r_top = 15, r_bore = 6, h_bore = 8, fillet = 2) {\n    difference() {\n        union() {\n            // main conical body\n            cylinder(h = h, r1 = r_base, r2 = r_top, $fn = 64);\n            \n            // rounded top edge\n            translate([0, 0, h])\n                rotate_extrude($fn = 64)\n                    translate([r_top - fillet, 0])\n                        circle(r = fillet);\n        }\n        \n        // counterbore\n        translate([0, 0, -1])\n            cylinder(h = h_bore + 2, r = r_bore, $fn = 32);\n    }\n}\n\nboss_conical();",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_square",
+    "openscad_code": "// boss_square - medium complexity square boss with rounded top edges and base fillet\nmodule boss_square(size = 60, height = 25, radius = 5) {\n    // Main square body\n    cube([size, size, height - radius], center = true);\n    \n    // Rounded top edges\n    translate([0, 0, height/2 - radius/2])\n        minkowski() {\n            cube([size - 2*radius, size - 2*radius, 0.1], center = true);\n            cylinder(h = radius, r = radius, center = true);\n        }\n    \n    // Base fillet\n    difference() {\n        translate([0, 0, -height/2 + radius/2])\n            cube([size, size, radius], center = true);\n        translate([0, 0, -height/2 - 0.1])\n            minkowski() {\n                cube([size - 2*radius, size - 2*radius, 0.1], center = true);\n                sphere(r = radius);\n            }\n    }\n}\n\nboss_square();",
+    "renders": false
+  },
+  {
+    "basic_shape": "boss_rounded",
+    "openscad_code": "// boss_rounded.scad\n\n// Main body with rounded top\nh = 35;\nr = 25;\ntop_radius = 20;\n\n// Cylindrical base\ncylinder(h=h-8, r=r, $fn=60);\n\n// Rounded top\ntranslate([0, 0, h-8])\n    sphere(r=top_radius, $fn=60);\n\n// Optional fillet at base (difference to make it cleaner)\ndifference() {\n    union() {\n        cylinder(h=h-8, r=r, $fn=60);\n        translate([0, 0, h-8])\n            sphere(r=top_radius, $fn=60);\n    }\n    // Remove internal overlap\n    translate([0, 0, -0.1])\n        cylinder(h=h-8+0.2, r=r-0.1, $fn=60);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "pocket",
+    "openscad_code": "difference() {\n    // main block\n    translate([0, 0, 2])\n        minkowski() {\n            cube([80, 60, 20], center=true);\n            sphere(2);\n        }\n\n    // rounded pocket cavity\n    translate([0, 0, 1])\n        minkowski() {\n            cube([70, 50, 10], center=true);\n            sphere(2);\n        }\n\n    // cut through bottom\n    translate([0, 0, -5])\n        cube([200, 200, 10], center=true);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "pocket_round",
+    "openscad_code": "// pocket_round: a shallow cylinder with rounded top edge and small corner fillets\nh = 12;               // overall height\nr = 45;               // pocket radius\ncr = 3;               // corner fillet radius\ntop_r = 2;            // top edge round-over\n\ndifference() {\n    // main body with rounded top edge\n    union() {\n        // lower cylinder\n        cylinder(h = h - top_r, r = r, $fn = 64);\n        // rounded top lip\n        translate([0, 0, h - top_r])\n            cylinder(h = top_r, r1 = r, r2 = r - top_r, $fn = 64);\n    }\n    // corner fillets\n    for (a = [0, 90, 180, 270])\n        rotate([0, 0, a])\n            translate([r - cr, 0, -0.1])\n                cylinder(h = cr + 0.2, r = cr, $fn = 20);\n    // central recess\n    translate([0, 0, -0.1])\n        cylinder(h = h + 0.2, r = r - 8, $fn = 64);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "pocket_square",
+    "openscad_code": "// Pocket square with rounded edges and slight taper\n$fn = 32;\n\n// Main square body with rounded edges\nhull() {\n    translate([0, 0, 2])\n        cube([70, 70, 1], center = true);\n    translate([0, 0, 0])\n        cube([65, 65, 1], center = true);\n}\n\n// Folded corner detail\ndifference() {\n    translate([30, 30, 2.5])\n        rotate([0, 0, 45])\n            cube([25, 25, 1], center = true);\n    translate([30, 30, 2.5])\n        rotate([0, 0, 45])\n            cube([20, 20, 2], center = true);\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "pocket_deep",
+    "openscad_code": "// Pocket – rectangular recess with rounded bottom edges\n$fn = 32;\n\n// Overall dimensions\npocket_w = 80;\npocket_d = 60;\npocket_h = 25;\n\n// Corner radius for rounded bottom and edges\nr = 8;\n\ndifference() {\n    // Outer block\n    cube([pocket_w, pocket_d, pocket_h]);\n\n    // Inner recess\n    translate([r, r, -1])\n    hull() {\n        // Four rounded bottom corners\n        translate([0, 0, 0]) cylinder(h = pocket_h + 2, r = r);\n        translate([pocket_w - 2*r, 0, 0]) cylinder(h = pocket_h + 2, r = r);\n        translate([0, pocket_d - 2*r, 0]) cylinder(h = pocket_h + 2, r = r);\n        translate([pocket_w - 2*r, pocket_d - 2*r, 0]) cylinder(h = pocket_h + 2, r = r);\n    }\n}",
+    "renders": false
+  },
+  {
+    "basic_shape": "pocket_shallow",
+    "openscad_code": "// Pocket shallow tray with rounded edges\n$fn=32;\n\n// Main tray body\ndifference() {\n    // Outer rounded box\n    minkowski() {\n        cube([90, 90, 20], center=true);\n        sphere(r=5);\n    }\n    \n    // Inner cavity\n    translate([0, 0, 5])\n    minkowski() {\n        cube([80, 80, 15], center=true);\n        sphere(r=3);\n    }\n}\n\n// Bottom feet (4 corners)\nfor(x=[-40, 40], y=[-40, 40])\n    translate([x, y, -15])\n    cylinder(h=5, r=3, center=true);",
+    "renders": false
+  },
+  {
+    "basic_shape": "pocket_large",
+    "openscad_code": "// Pocket large - medium complexity\n// Rounded rectangular prism with shallow depth\n\nmodule pocket_large() {\n    // Outer rounded box\n    difference() {\n        // Main rounded shape\n        minkowski() {\n            cube([90, 80, 15], center=true);\n            sphere(5);\n        }\n        \n        // Hollow interior\n        minkowski() {\n            cube([80, 70, 20], center=true);\n            sphere(4);\n        }\n    }\n}\n\npocket_large();",
+    "renders": false
+  },
+  {
+    "basic_shape": "pocket_small",
+    "openscad_code": "// pocket_small – rounded-edge box with shallow cavity\nwall = 3;\nouter = [40, 35, 12];\ninner = [34, 29, 6];\nradius = 4;\n\ndifference() {\n    // outer rounded box\n    minkowski() {\n        cube(outer - [radius*2, radius*2, 0], center = true);\n        cylinder(r = radius, h = outer.z, center = true);\n    }\n\n    // inner cavity\n    translate([0, 0, 2])\n    minkowski() {\n        cube(inner - [radius*2, radius*2, 0], center = true);\n        cylinder(r = radius, h = inner.z, center = true);\n    }\n}",
+    "renders": false
   }
 ]
