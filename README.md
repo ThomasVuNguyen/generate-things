@@ -20,12 +20,12 @@ We have the following categories of objects
 - tech & electronics: ThomasTheMaker/Synthetic-Devices
 - tools: ThomasTheMaker/Synthetic-Tools
 - pokemon: ThomasTheMaker/Synthetic-Pokemon
-- toys: running
-- plants: running
-- furniture: running
-- mechanical components: running
-= decorative art: running
-- kitchen appliances: running
-- natural objects: running
-- office supplies: running
-- sport equipment: running
+- toys: ThomasTheMaker/Synthetic-Toys
+- plants: ThomasTheMaker/Synthetic-Plants
+- furniture: ThomasTheMaker/Synthetic-Furniture
+- mechanical components: ThomasTheMaker/Synthetic-Mech-Components
+= decorative art: ThomasTheMaker/Synthetic-Decorative-Art
+- kitchen appliances: ThomasTheMaker/Synthetic-Kitchen-Appliances
+- natural objects: ThomasTheMaker/Synthetic-Natural-Object
+- office supplies: ThomasTheMaker/Synthetic-Office-Supply
+- sport equipment: ThomasTheMaker/Synthetic-Sport-Equipment
