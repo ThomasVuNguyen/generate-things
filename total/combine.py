@@ -5,6 +5,8 @@ Combine all dataset JSON files into a single Synthetic-Objects.json
 
 import json
 import os
+import subprocess
+import tempfile
 
 # Mapping of category names to their JSON file keys
 CATEGORY_TO_KEY = {
@@ -67,22 +69,89 @@ def load_dataset(filepath):
     with open(filepath, 'r') as f:
         return json.load(f)
 
-def extract_items(dataset_data, name_key):
-    """Extract items from dataset with specified name key"""
+def can_render_openscad(code, timeout=5):
+    """Test if OpenSCAD code can be rendered successfully"""
+    temp_scad = None
+    temp_png = None
+    try:
+        # Create temporary .scad file
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.scad', delete=False) as temp_file:
+            temp_file.write(code)
+            temp_scad = temp_file.name
+        
+        # Create temporary PNG output path
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.png', delete=False) as temp_file:
+            temp_png = temp_file.name
+        
+        # Try to render using OpenSCAD with virtual display
+        result = subprocess.run(
+            ['xvfb-run', '-a', 'openscad', '--imgsize=100,100', 
+             '-o', temp_png, temp_scad],
+            capture_output=True,
+            text=True,
+            timeout=timeout
+        )
+        
+        # Check if render succeeded and file exists with content
+        success = result.returncode == 0 and os.path.exists(temp_png) and os.path.getsize(temp_png) > 0
+        
+        # Clean up temp files
+        if temp_scad and os.path.exists(temp_scad):
+            os.unlink(temp_scad)
+        if temp_png and os.path.exists(temp_png):
+            os.unlink(temp_png)
+        
+        return success
+    except Exception as e:
+        # Clean up on error
+        if temp_scad and os.path.exists(temp_scad):
+            os.unlink(temp_scad)
+        if temp_png and os.path.exists(temp_png):
+            os.unlink(temp_png)
+        return False
+
+def extract_items(dataset_data, name_key, validate=False):
+    """Extract items from dataset with specified name key, optionally validating renders"""
     items = []
-    for entry in dataset_data:
+    total = len(dataset_data)
+    for i, entry in enumerate(dataset_data):
         if name_key in entry and "openscad_code" in entry:
+            code = entry["openscad_code"]
+            
+            # Skip if validation enabled and code cannot be rendered
+            if validate:
+                if not can_render_openscad(code):
+                    continue
+            
             items.append({
                 "name": entry[name_key],
-                "code": entry["openscad_code"]
+                "code": code
             })
+            
+            # Print progress every 50 items
+            if (i + 1) % 50 == 0:
+                print(f"    Processed {i + 1}/{total} items ({len(items)} valid)")
+    
     return items
 
 def main():
+    import sys
+    
+    # Validation is enabled by default, can be disabled with --no-validate
+    validate = '--no-validate' not in sys.argv and '-n' not in sys.argv
+    
+    if validate:
+        print("Validation ENABLED (default): Only including renderable OpenSCAD code...")
+        print("Use --no-validate to skip validation")
+    else:
+        print("Validation DISABLED: Including all code")
+    
     # Get the parent directory (workspace root)
     workspace_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     
     combined_data = []
+    total_items = 0
+    valid_items = 0
     
     # Process each category
     for category, filename in DATASET_FILES.items():
@@ -92,7 +161,7 @@ def main():
             print(f"Warning: {filename} not found, skipping...")
             continue
         
-        print(f"Processing {category}...")
+        print(f"\nProcessing {category}...")
         
         # Load dataset
         try:
@@ -101,9 +170,9 @@ def main():
             print(f"Error loading {filename}: {e}")
             continue
         
-        # Extract items
+        # Extract items (with optional validation)
         name_key = CATEGORY_TO_KEY[category]
-        items = extract_items(dataset_data, name_key)
+        items = extract_items(dataset_data, name_key, validate=validate)
         
         # Add to combined data
         for item in items:
@@ -113,15 +182,24 @@ def main():
                 "code": item["code"]
             })
         
-        print(f"  Added {len(items)} items from {category}")
+        total_items += len(dataset_data)
+        valid_items += len(items)
+        print(f"  {len(items)}/{len(dataset_data)} items added from {category} ({valid_items}/{total_items} total valid)")
     
     # Save combined dataset
     output_path = os.path.join(workspace_root, "Synthetic-Objects.json")
     with open(output_path, 'w') as f:
         json.dump(combined_data, f, indent=2)
     
-    print(f"\nTotal items: {len(combined_data)}")
+    print(f"\n{'='*60}")
+    print(f"Validation: {'ENABLED' if validate else 'DISABLED'}")
+    print(f"Total items processed: {total_items}")
+    print(f"Valid items included: {len(combined_data)}")
+    if total_items > 0:
+        success_rate = (len(combined_data) / total_items) * 100
+        print(f"Success rate: {success_rate:.1f}%")
     print(f"Combined dataset saved to: {output_path}")
+    print(f"{'='*60}")
 
 if __name__ == "__main__":
     main()
