@@ -149,54 +149,68 @@ def main():
     # Get the parent directory (workspace root)
     workspace_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     
-    combined_data = []
     total_items = 0
     valid_items = 0
     
-    # Process each category
-    for category, filename in DATASET_FILES.items():
-        filepath = os.path.join(workspace_root, filename)
-        
-        if not os.path.exists(filepath):
-            print(f"Warning: {filename} not found, skipping...")
-            continue
-        
-        print(f"\nProcessing {category}...")
-        
-        # Load dataset
-        try:
-            dataset_data = load_dataset(filepath)
-        except Exception as e:
-            print(f"Error loading {filename}: {e}")
-            continue
-        
-        # Extract items (with optional validation)
-        name_key = CATEGORY_TO_KEY[category]
-        items = extract_items(dataset_data, name_key, validate=validate)
-        
-        # Add to combined data
-        for item in items:
-            combined_data.append({
-                "name": item["name"],
-                "category": category,
-                "code": item["code"]
-            })
-        
-        total_items += len(dataset_data)
-        valid_items += len(items)
-        print(f"  {len(items)}/{len(dataset_data)} items added from {category} ({valid_items}/{total_items} total valid)")
-    
-    # Save combined dataset
+    # Open output file and write opening bracket
     output_path = os.path.join(workspace_root, "Synthetic-Objects.json")
-    with open(output_path, 'w') as f:
-        json.dump(combined_data, f, indent=2)
+    with open(output_path, 'w') as output_file:
+        output_file.write('[\n')
+        first_item = True
+        
+        # Process each category
+        for category, filename in DATASET_FILES.items():
+            filepath = os.path.join(workspace_root, filename)
+            
+            if not os.path.exists(filepath):
+                print(f"Warning: {filename} not found, skipping...")
+                continue
+            
+            print(f"\nProcessing {category}...")
+            
+            # Load dataset
+            try:
+                dataset_data = load_dataset(filepath)
+            except Exception as e:
+                print(f"Error loading {filename}: {e}")
+                continue
+            
+            # Extract items (with optional validation)
+            name_key = CATEGORY_TO_KEY[category]
+            items = extract_items(dataset_data, name_key, validate=validate)
+            
+            # Write items directly to file
+            for item in items:
+                # Add comma before item if not the first
+                if not first_item:
+                    output_file.write(',\n')
+                first_item = False
+                
+                # Write item as JSON
+                item_data = {
+                    "name": item["name"],
+                    "category": category,
+                    "code": item["code"]
+                }
+                json_str = json.dumps(item_data, indent=2)
+                # Indent the JSON string
+                indented_json = '\n'.join('  ' + line for line in json_str.split('\n'))
+                output_file.write(indented_json)
+                
+                valid_items += 1
+            
+            total_items += len(dataset_data)
+            print(f"  {len(items)}/{len(dataset_data)} items added from {category} ({valid_items}/{total_items} total valid)")
+        
+        # Write closing bracket
+        output_file.write('\n]\n')
     
     print(f"\n{'='*60}")
     print(f"Validation: {'ENABLED' if validate else 'DISABLED'}")
     print(f"Total items processed: {total_items}")
-    print(f"Valid items included: {len(combined_data)}")
+    print(f"Valid items included: {valid_items}")
     if total_items > 0:
-        success_rate = (len(combined_data) / total_items) * 100
+        success_rate = (valid_items / total_items) * 100
         print(f"Success rate: {success_rate:.1f}%")
     print(f"Combined dataset saved to: {output_path}")
     print(f"{'='*60}")
